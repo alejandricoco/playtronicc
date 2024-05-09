@@ -74,6 +74,7 @@
     <string name="campeonatos">Campeonatos</string>
     <string name="enviar">Enviar</string>
     <string name="escribaMensaje">Escribe un mensaje</string>
-
+    <string name="tenis">Tenis</string>
+    <string name="padel">Padel</string>
 
 </resources>
