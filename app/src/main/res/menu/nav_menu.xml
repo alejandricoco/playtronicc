@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+tools:showIn = "navigation_view">
+
+    <group
+        android:checkableBehavior="none">
+
+        <item
+                android:id="@+id/nav_reservas"
+                android:icon="@drawable/baseline_event_available_24"
+                android:title="@string/reservas" />
+        <item
+                android:id="@+id/nav_nivel"
+                android:icon="@drawable/baseline_auto_graph_24"
+                android:title="@string/nivel" />
+        <item
+                android:id="@+id/nav_ranking"
+                android:icon="@drawable/baseline_stacked_bar_chart_24"
+                android:title="@string/ranking" />
+
+        <item
+                android:id="@+id/nav_campeonatos"
+                android:icon="@drawable/baseline_sports_tennis_24"
+                android:title="@string/campeonatos" />
+
+        <item
+                android:id="@+id/nav_eventos"
+                android:icon="@drawable/baseline_event_24"
+                android:title="@string/eventos" />
+
+        <item
+                android:id="@+id/nav_contacto"
+                android:icon="@drawable/baseline_phone_24"
+                android:title="@string/contacto" />
+
+
+        <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/baseline_power_settings_new_24"
+                android:title="@string/cerrarsesion" />
+
+    </group>
+
+</menu>

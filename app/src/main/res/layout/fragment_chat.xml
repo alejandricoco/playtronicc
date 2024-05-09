@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/grey"
+                tools:context="fragments.fragmentsMenu.FragmentChat">
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewMensajes"
+            android:layout_marginTop="70dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/layoutEnviarMensaje" />
+
+    <LinearLayout
+            android:id="@+id/layoutEnviarMensaje"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:layout_marginBottom="55dp"
+            android:padding="16dp">
+
+        <EditText
+                android:id="@+id/editTextMensaje"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textColorHint="#777171"
+                android:backgroundTint="#777171"
+                android:layout_marginRight="15dp"
+                android:hint="@string/escribaMensaje" />
+
+        <Button
+                android:id="@+id/buttonEnviar"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:drawableRight="@drawable/send"
+                android:paddingEnd="6dp"
+                android:backgroundTint="@color/button_amarillo_pressed"
+                android:gravity="bottom"
+                style="@style/RoundButton"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

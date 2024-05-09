@@ -1,0 +1,4 @@
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+        android:color="@android:color/transparent"> <!-- Este es el color del efecto de onda -->
+    <item android:drawable="@android:color/transparent" /> <!-- Este es el color de fondo cuando no hay interacción -->
+</ripple>

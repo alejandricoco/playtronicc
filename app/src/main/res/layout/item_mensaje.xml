@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="8dp"
+              android:background="@drawable/burbuja_redondeada_gris"
+              android:layout_marginTop="6dp"
+              android:layout_marginBottom="6dp"
+              android:layout_marginLeft="12dp"
+              android:layout_marginRight="12dp">
+
+    <TextView
+            android:id="@+id/textViewNombreRemitente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/yellow"
+            android:textStyle="bold"/>
+
+    <TextView
+            android:id="@+id/textViewFecha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"/>
+
+    <TextView
+            android:id="@+id/textViewContenido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+    <!-- Puedes añadir más vistas aquí si tu diseño de mensaje lo requiere -->
+
+</LinearLayout>

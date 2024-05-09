@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "62334836693",
+    "project_id": "playtronic-72bb6",
+    "storage_bucket": "playtronic-72bb6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62334836693:android:2316bde524b70852fca75c",
+        "android_client_info": {
+          "package_name": "com.example.playtronic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "62334836693-ubcdiq67c1qkieo6a4ke7rocqmhobhd5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.playtronic",
+            "certificate_hash": "2d12cd2d758191fc7bbf55dc66097b1156c90321"
+          }
+        },
+        {
+          "client_id": "62334836693-4icqiu7vg79ub4eqal5v741obiqhnun8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA0RqVZGOGGBCmVYV4RhIrNVpHCQct7P8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "62334836693-4icqiu7vg79ub4eqal5v741obiqhnun8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

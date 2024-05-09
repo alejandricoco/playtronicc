@@ -1,0 +1,37 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Playtronic" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your light theme here.
+        Theme.Material3.DayNight.NoActionBar -->
+        <item name="itemRippleColor">@color/grey</item>
+        <item name="colorPrimaryVariant">@color/grey</item> // aquii
+        <item name="colorOnSurface">@android:color/transparent</item>
+
+        <item name="colorAccent">@color/yellow</item>
+        <item name="colorOnPrimary">@color/yellow</item>
+        <item name="colorControlActivated">@color/yellow</item>
+
+        <item name="android:statusBarColor">@color/yellow</item>
+        <item name="textInputStyle">@style/EditTextTheme</item>
+        <item name="colorPrimary">@color/grey</item> // aquii
+        <item name="colorSecondary">@color/yellow</item>
+    </style>
+
+    <style name="Theme.Playtronic" parent="Base.Theme.Playtronic">
+        <item name="colorAccent">@color/yellow</item>
+        <item name="colorControlActivated">@color/yellow</item>
+        <item name="colorOnSurface">@color/yellow</item>
+        <item name="textInputStyle">@style/EditTextTheme</item>
+        <item name="colorPrimary">@color/yellow</item>
+        <item name="colorSecondary">@color/yellow</item>
+    </style>
+
+    <style name="RoundButton" parent="Widget.MaterialComponents.Button">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MyApp.Button.Rounded</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.MyApp.Button.Rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>

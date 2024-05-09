@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:minHeight="850dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/creaCuentaLayout"
+        android:background="#353434"
+        tools:context=".fragments.fragmentsMain.FragmentCreaCuenta">
+
+
+
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="47.5dp"
+            app:layout_constraintTop_toBottomOf="@+id/tronicLogo"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="1000dp"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/usu1"
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:hint="@string/user"
+                    android:fontFamily="@font/robotoregular"
+                    app:boxBackgroundColor="#4A4949"
+                    app:boxCornerRadiusTopStart="30dp"
+                    app:boxCornerRadiusTopEnd="30dp"
+                    app:boxCornerRadiusBottomStart="30dp"
+                    app:boxCornerRadiusBottomEnd="30dp"
+                    style="@style/TextInputLayoutStyle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.31">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputUser1"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:paddingStart="30dp"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/robotoregular"
+                        android:textSize="16sp"
+                        android:background="@null"
+                        android:inputType="textVisiblePassword"
+                        style="@style/EditTextTheme"
+                />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/nombreCompleto"
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/nombreCompleto"
+                    android:fontFamily="@font/robotoregular"
+                    app:boxBackgroundColor="#4A4949"
+                    app:boxCornerRadiusTopStart="30dp"
+                    app:boxCornerRadiusTopEnd="30dp"
+                    app:boxCornerRadiusBottomStart="30dp"
+                    app:boxCornerRadiusBottomEnd="30dp"
+                    style="@style/TextInputLayoutStyle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.31">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputNombreCompleto"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:paddingStart="30dp"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/robotoregular"
+                        android:textSize="16sp"
+                        android:background="@null"
+                        android:inputType="textVisiblePassword"
+                        style="@style/EditTextTheme"
+                />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textinputlayoutemail"
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/email"
+                    android:fontFamily="@font/robotoregular"
+                    app:boxBackgroundColor="#4A4949"
+                    app:boxCornerRadiusTopStart="30dp"
+                    app:boxCornerRadiusTopEnd="30dp"
+                    app:boxCornerRadiusBottomStart="30dp"
+                    app:boxCornerRadiusBottomEnd="30dp"
+                    style="@style/TextInputLayoutStyle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.4">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:paddingStart="30dp"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/robotoregular"
+                        android:textSize="16sp"
+                        android:background="@null"
+                        android:inputType="textVisiblePassword"
+                        style="@style/EditTextTheme"
+                />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/fechaNac"
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/fecha_nacimiento"
+                    android:fontFamily="@font/robotoregular"
+                    app:boxBackgroundColor="#4A4949"
+                    app:boxCornerRadiusTopStart="30dp"
+                    app:boxCornerRadiusTopEnd="30dp"
+                    app:boxCornerRadiusBottomStart="30dp"
+                    app:boxCornerRadiusBottomEnd="30dp"
+                    style="@style/TextInputLayoutStyle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.49">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputFechaNac"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:paddingStart="30dp"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/robotoregular"
+                        android:textSize="16sp"
+                        android:background="@null"
+                        android:inputType="textVisiblePassword"
+                        android:focusable="false"
+                        style="@style/EditTextTheme"
+                />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/pass1"
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/password"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/robotoregular"
+                    app:boxBackgroundColor="#4A4949"
+                    app:boxCornerRadiusTopStart="30dp"
+                    app:boxCornerRadiusTopEnd="30dp"
+                    app:boxCornerRadiusBottomStart="30dp"
+                    app:boxCornerRadiusBottomEnd="30dp"
+                    style="@style/TextInputLayoutStyle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.58">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputPass1"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:paddingStart="30dp"
+                        android:inputType="textPassword"
+                        android:fontFamily="@font/robotoregular"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:background="@null"
+                        style="@style/EditTextTheme"
+
+                />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/pass2"
+                    android:layout_width="320dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/repitaPassword"
+                    android:fontFamily="@font/robotoregular"
+                    android:layout_marginTop="5dp"
+                    app:boxBackgroundColor="#4A4949"
+                    app:boxCornerRadiusTopStart="30dp"
+                    app:boxCornerRadiusTopEnd="30dp"
+                    app:boxCornerRadiusBottomStart="30dp"
+                    app:boxCornerRadiusBottomEnd="30dp"
+                    style="@style/TextInputLayoutStyle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.67">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputPass2"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:paddingStart="30dp"
+                        android:inputType="textPassword"
+                        android:fontFamily="@font/robotoregular"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:background="@null"
+                        style="@style/EditTextTheme"
+
+                />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <Button
+                    android:id="@+id/buttonCrearCuenta"
+                    android:text="@string/btnCrearCuenta"
+                    android:layout_marginTop="5dp"
+                    android:textAllCaps="false"
+                    android:layout_width="320dp"
+                    android:layout_height="60dp"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/robotomedium"
+                    android:backgroundTint="@color/button_amarillo_pressed" android:textColor="#000000"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintVertical_bias="0.9"
+                    style="@style/RoundButton"
+                    android:letterSpacing="0.009"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <ImageView
+            android:src="@drawable/playtronic"
+            android:layout_width="300dp"
+            android:layout_height="100dp" android:id="@+id/tronicLogo"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.11"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

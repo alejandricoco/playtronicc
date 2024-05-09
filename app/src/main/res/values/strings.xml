@@ -1,0 +1,79 @@
+<resources>
+    <string name="recuPass">Recupera tu cuenta</string>
+    <string name="restPass">Reestablecer contraseña</string>
+    <string name="introduCorreo">Introduce tu dirección de correo electrónico.</string>
+    <string name="tv1">Login</string>
+    <string name="tvRegistrate">Regístrate</string>
+    <string name="tvRegistrarse">Registrarse</string>
+    <string name="nombreCompleto">Nombre completo</string>
+    <string name="accCreated">Cuenta creada con éxito</string>
+    <string name="accCreated2">Tu cuenta ha sido creada con éxito, te hemos enviado un enlace de confirmación a tu
+        correo electrónico para activar tu cuenta.
+    </string>
+    <string name="verifyAccount">Verifica tu cuenta por favor</string>
+    <string name="verifyAccount2">Para poder acceder a tu cuenta, necesitamos que verifiques tu dirección de correo
+        electrónico. Por favor, revisa tu bandeja de entrada y sigue las instrucciones que te hemos enviado.
+    </string>
+    <string name="aceptar">Aceptar</string>
+    <string name="enlaceRestPass">Enlace de recuperación de contraseña enviado</string>
+    <string name="enlaceRestPass2">Te hemos enviado un enlace de restablecimiento de contraseña a tu correo electrónico.
+        Por favor, revisa tu bandeja de entrada y sigue las instrucciones que te hemos enviado.
+    </string>
+    <string name="user">Usuario</string>
+    <string name="email">Email</string>
+    <string name="fecha_nacimiento">Fecha de nacimiento</string>
+    <string name="password">Contraseña</string>
+    <string name="repitaPassword">Repita su contraseña</string>
+    <string name="btnOlvidaContraseña">¿Has olvidado la contraseña?</string>
+    <string name="btnRegistrate">Crear nueva cuenta</string>
+    <string name="btnCrearCuenta">Crear cuenta</string>
+    <string name="btnLogin">Iniciar sesión</string>
+    <string name="btnGoogle">Iniciar sesión con Google</string>
+    <string name="btnTwitter">Iniciar sesión con Twitter</string>
+    <string name="imgAndroid">Imagen muñeco Android</string>
+    <string name="imgVerification">Imagen verificacion</string>
+    <string name="rv_descripcion">Descripción rv</string>
+    <string name="rv_precio">Precio</string>
+    <string name="tituloRV">Productos</string>
+    <string name="tv_swapify">Swapify</string>
+    <string name="tv_telf">607112856</string>
+    <string name="tv_emaaail">swapify@info.es</string>
+    <string name="tv_mapaaa">Murcia</string>
+    <string name="tv_whatsaaapp">607112856</string>
+    <string name="btnContacto">Contacto</string>
+    <string name="tvpalmapa">Encuéntranos aquí:</string>
+    <string name="repPassword">Repita la contraseña</string>
+    <string name="cambiarContrasena">Cambiar Contraseña</string>
+    <string name="nav_open">Abrir Drawer Navigation</string>
+    <string name="nav_close">Cerrar Drawer Navigation</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_web_client_id">62334836693-4icqiu7vg79ub4eqal5v741obiqhnun8.apps.googleusercontent.com
+    </string>
+
+    <string name="facebook_app_id">461635972863697</string>
+    <string name="fb_login_protocol_scheme">fb461635972863697</string>
+    <string name="facebook_client_token">Rvbi3eDaom4Pv3vnTaqt9CguyWg</string>
+
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">tdfoBsyp2ifZHBuoYPGQHcBIJ</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">7Ragno4z6K4EX5LzrRaGlvIxv9UzQhYlP9Tiv2VhwZTG4kO5fa</string>
+    <string name="com.twitter.sdk.android.ACCESS_TOKEN">299811939-usZYidx4CQX1dGqGnL0UMxeUi4erOOdq4whraE9V</string>
+    <string name="com.twitter.sdk.android.ACCESS_TOKEN_SECRET">nu056ZCFUuUYpr4fWxyxlQhibxbEwTAZCNQV3KUxL1342</string>
+
+
+    <string name="inicio">Inicio</string>
+    <string name="jugar">Jugar</string>
+    <string name="chat">Chat</string>
+    <string name="perfil">Perfil</string>
+    <string name="cerrarsesion">Cerrar sesión</string>
+    <string name="eventos">Eventos</string>
+    <string name="reservas">Reservas</string>
+    <string name="ranking">Ranking</string>
+    <string name="nivel">Nivel</string>
+    <string name="contacto">Contacto</string>
+    <string name="campeonatos">Campeonatos</string>
+    <string name="enviar">Enviar</string>
+    <string name="escribaMensaje">Escribe un mensaje</string>
+
+
+</resources>

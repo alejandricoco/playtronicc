@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="colorAccent">@color/yellow</item>
+        <item name="colorOnSurface">#EFD479</item>
+        <item name="boxStrokeColor">#EFD479</item>
+        <item name="android:textColorHint">#83817B</item>
+        <item name="colorControlActivated">@color/yellow</item>
+        <item name="android:textColorHighlight">@android:color/transparent</item>
+        <item name="hintTextAppearance">@style/MyHintTextAppearance</item>
+    </style>
+    <style name="EditTextTheme" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/yellow</item>
+        <item name="android:textCursorDrawable">@drawable/cursor_color</item>
+    </style>
+    <style name="MyHintTextAppearance" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Color de fondo -->
+        <item name="android:background">#353434</item>
+        <!-- Color del texto -->
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+    <style name="PalBottomMenu">
+        <item name="android:colorControlHighlight">@color/yellow</item>
+        <item name="android:colorButtonNormal">@color/yellow</item>
+        <item name="android:colorPressedHighlight">@color/yellow</item>
+        <item name="android:colorForeground">@color/yellow</item>
+    </style>
+    <style name="BottomNavigationViewStyle" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemRippleColor">@color/transparent</item> <!-- Color transparente para el efecto de onda -->
+        <item name="itemIconTint">@color/bottom_navigation_colors</item> <!-- Selector de color para el ícono -->
+        <item name="itemTextColor">@color/bottom_navigation_colors</item> <!-- Selector de color para el texto -->
+        <item name="itemBackground">@color/bottom_navigation_item_background</item> <!-- Selector de drawable para el fondo -->
+    </style>
+</resources>
