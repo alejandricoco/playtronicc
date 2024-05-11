@@ -1,20 +1,27 @@
 package com.example.playtronic.fragments.fragmentsMenu
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager.TAG
 import com.example.playtronic.R
 import androidx.viewpager2.widget.ViewPager2
 import com.example.playtronic.ImageSliderAdapter
 import com.example.playtronic.MenuActivity
 import com.example.playtronic.fragments.fragmentsMain.FragmentLogin
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class FragmentInicio : Fragment() {
@@ -23,6 +30,7 @@ class FragmentInicio : Fragment() {
     private lateinit var indicatorLayout: LinearLayout
     private lateinit var sliderHandler: Handler
     private lateinit var sliderRunnable: Runnable
+    private val db = FirebaseFirestore.getInstance()
     private val images = listOf(
         R.drawable.reservas,
         R.drawable.campionatos,
@@ -72,6 +80,8 @@ class FragmentInicio : Fragment() {
         })
 
         startImageSlider(images.size)
+
+        comprobarReservasUsuario()
     }
 
     // ... (Mantén las funciones setupIndicators, setCurrentIndicator y startImageSlider aquí)
@@ -153,5 +163,73 @@ class FragmentInicio : Fragment() {
         fragmentTransaction.commit()
     }
 
+
+    @SuppressLint("RestrictedApi")
+    private fun comprobarReservasUsuario() {
+        val textViewReservas = view?.findViewById<TextView>(R.id.tvReservas) // Asegúrate de reemplazar 'textViewReservas' con el ID real de tu TextView
+        val usuario = FirebaseAuth.getInstance().currentUser?.displayName
+        val userEmail = FirebaseAuth.getInstance().currentUser?.email
+
+        if (usuario != null) {
+            db.collection("reservas")
+                .whereEqualTo("usuario", usuario)
+                .get()
+                .addOnSuccessListener { result ->
+                    if (result.isEmpty) {
+                        textViewReservas?.text = "No has reservado ninguna pista... A qué esperas?"
+                    } else {
+                        val reservas = StringBuilder("Reservas:\n")
+                        for (document in result) {
+                            val deporte = document.getString("deporte")
+                            val pista = document.getString("pista")
+                            val dia = document.getString("dia")
+                            val hora = document.getString("hora")
+                            reservas.append("$deporte, $pista, $dia, $hora\n")
+                        }
+                        textViewReservas?.text = reservas.toString()
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error obteniendo las reservas.", exception)
+                }
+        } else if (userEmail != null) {
+            // Si no hay reservas para el usuario, intenta obtener el nombre del usuario de la colección "users"
+            db.collection("users").document(userEmail).get()
+                .addOnSuccessListener { document ->
+                    val nombre = document.getString("nombre")
+                    if (nombre != null) {
+                        // Busca las reservas para el nombre del usuario
+                        db.collection("reservas")
+                            .whereEqualTo("usuario", nombre)
+                            .get()
+                            .addOnSuccessListener { resultNombre ->
+                                if (resultNombre.isEmpty) {
+                                    textViewReservas?.text = "No has reservado ninguna pista... A qué esperas?"
+                                } else {
+                                    val reservas = StringBuilder("Reservas:\n")
+                                    for (document in resultNombre) {
+                                        val deporte = document.getString("deporte")
+                                        val pista = document.getString("pista")
+                                        val dia = document.getString("dia")
+                                        val hora = document.getString("hora")
+                                        reservas.append("$deporte, $pista, $dia, $hora\n")
+                                    }
+                                    textViewReservas?.text = reservas.toString()
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                Log.w(TAG, "Error obteniendo las reservas.", exception)
+                            }
+                    } else {
+                        Toast.makeText(context, "No se pudo obtener el nombre de usuario.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error obteniendo el nombre de usuario.", exception)
+                }
+        } else {
+            Toast.makeText(context, "Por favor, inicia sesión para ver tus reservas.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 }

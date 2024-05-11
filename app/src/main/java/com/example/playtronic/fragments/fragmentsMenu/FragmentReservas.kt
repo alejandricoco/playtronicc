@@ -2,6 +2,7 @@ package com.example.playtronic.fragments.fragmentsMenu
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Paint
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.os.Bundle
@@ -22,6 +23,7 @@ import com.example.playtronic.R
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.chip.Chip
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 
@@ -46,17 +48,63 @@ class FragmentReservas : Fragment() {
         chipGroupHoras = view.findViewById(R.id.chipGroupHoras)
         buttonReservar = view.findViewById(R.id.button_reservar)
         toggleGroupDeporte = view.findViewById(R.id.toggleGroupDeporte)
+        var usuario = FirebaseAuth.getInstance().currentUser?.displayName
+
+        // si usuario es null, obten de la coleccion users de firebase el campo usuario y asignalo a usuario
+        if (usuario == null) {
+            val userEmail = FirebaseAuth.getInstance().currentUser?.email
+            if (userEmail != null) {
+                db.collection("users").document(userEmail).get()
+                    .addOnSuccessListener { document ->
+                        if (document != null) {
+                            usuario = document.getString("nombre")
+                            // Continúa con el código aquí...
+                        } else {
+                            Toast.makeText(context, "No se pudo obtener el nombre de usuario.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w(TAG, "Error obteniendo el nombre de usuario.", exception)
+                    }
+            } else {
+                Toast.makeText(context, "Por favor, inicia sesión para hacer una reserva.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         setupPistas()
         setupFechas()
         setupHoras()
+
+        toggleGroupDeporte.addOnButtonCheckedListener{group, checkedId, isChecked ->
+            if (isChecked) {
+                for (i in 0 until gridLayoutPistas.childCount) {
+                    val chip = gridLayoutPistas.getChildAt(i) as Chip
+                    chip.isChecked = false
+                }
+                for (i in 0 until chipGroupFechas.childCount) {
+                    val chip = chipGroupFechas.getChildAt(i) as Chip
+                    chip.isChecked = false
+                }
+                for (i in 0 until chipGroupHoras.childCount) {
+                    val chip = chipGroupHoras.getChildAt(i) as Chip
+                    chip.isChecked = false
+                }
+                loadReservas()
+            }
+        }
 
         buttonReservar.setOnClickListener {
             val deporte = if (toggleGroupDeporte.checkedButtonId == R.id.btnTenis) "tenis" else "padel"
             val pista = getSelectedChipText(gridLayoutPistas)
             val dia = getSelectedChipText(chipGroupFechas)
             val hora = getSelectedChipText(chipGroupHoras)
-            val usuario = "usuario logueado" // Reemplaza esto con el usuario logueado
+
+
+            if (pista.isEmpty() || dia.isEmpty() || hora.isEmpty()) {
+                Toast.makeText(context, "Asegúrate de haber seleccionado deporte, pista," +
+                                            " dia y hora disponibles por favor", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             val reserva = hashMapOf(
                 "deporte" to deporte,
@@ -84,7 +132,6 @@ class FragmentReservas : Fragment() {
 
         }
 
-
         return view
     }
 
@@ -97,36 +144,25 @@ class FragmentReservas : Fragment() {
 
     @SuppressLint("RestrictedApi")
     private fun loadReservas() {
+        val deporteSeleccionado = if (toggleGroupDeporte.checkedButtonId == R.id.btnTenis) "tenis" else "padel"
+        val pistaSeleccionada = getSelectedChipText(gridLayoutPistas)
+        val diaSeleccionado = getSelectedChipText(chipGroupFechas)
+
         db.collection("reservas")
+            .whereEqualTo("deporte", deporteSeleccionado)
+            .whereEqualTo("pista", pistaSeleccionada)
+            .whereEqualTo("dia", diaSeleccionado)
             .get()
             .addOnSuccessListener { result ->
-                for (document in result) {
-                    val deporteReserva = document.getString("deporte") ?: ""
-                    val pistaReserva = document.getString("pista") ?: ""
-                    val diaReserva = document.getString("dia") ?: ""
-                    val horaReserva = document.getString("hora") ?: ""
-
-                    // Verifica si la reserva corresponde al deporte seleccionado
-                    val deporteSeleccionado = if (toggleGroupDeporte.checkedButtonId == R.id.btnTenis) "tenis" else "padel"
-                    if (deporteReserva == deporteSeleccionado) {
-                        // Encuentra el chip correspondiente a la pista y al día reservados
-                        for (i in 0 until gridLayoutPistas.childCount) {
-                            val chipPista = gridLayoutPistas.getChildAt(i) as Chip
-                            if (chipPista.text == pistaReserva) {
-                                for (j in 0 until chipGroupFechas.childCount) {
-                                    val chipDia = chipGroupFechas.getChildAt(j) as Chip
-                                    if (chipDia.text == diaReserva) {
-                                        // Encuentra el chip correspondiente a la hora reservada y deshabilítalo
-                                        for (k in 0 until chipGroupHoras.childCount) {
-                                            val chipHora = chipGroupHoras.getChildAt(k) as Chip
-                                            if (chipHora.text == horaReserva) {
-                                                chipHora.isEnabled = false
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                for (i in 0 until chipGroupHoras.childCount) {
+                    val chipHora = chipGroupHoras.getChildAt(i) as Chip
+                    val hora = chipHora.text.toString()
+                    val horaEstaReservada = result.any { it.getString("hora") == hora }
+                    chipHora.isEnabled = !horaEstaReservada
+                    if (horaEstaReservada) {
+                        chipHora.paintFlags = chipHora.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    } else {
+                        chipHora.paintFlags = chipHora.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
                     }
                 }
             }
@@ -144,16 +180,6 @@ class FragmentReservas : Fragment() {
         }
         return ""
     }
-
-    private fun disableChip(gridLayout: GridLayout, text: String) {
-        for (i in 0 until gridLayout.childCount) {
-            val chip = gridLayout.getChildAt(i) as Chip
-            if (chip.text == text) {
-                chip.isEnabled = false
-            }
-        }
-    }
-
 
     private fun setupPistas() {
         val pistas = listOf("Pista 1", "Pista 2", "Pista 3", "Pista 4", "Pista 5", "Pista 6")
@@ -175,6 +201,17 @@ class FragmentReservas : Fragment() {
                                 otherChip.isChecked = false
                             }
                         }
+                        for (i in 0 until chipGroupFechas.childCount) {
+                            val chipFecha = chipGroupFechas.getChildAt(i) as Chip
+                            chipFecha.isChecked = false
+                        }
+                        for (i in 0 until chipGroupHoras.childCount) {
+                            val chipHora = chipGroupHoras.getChildAt(i) as Chip
+                            chipHora.isChecked = false
+                        }
+                        //setupFechas()
+                        //setupHoras()
+                        loadReservas()
                     }
                 }
             }
@@ -209,6 +246,12 @@ class FragmentReservas : Fragment() {
                                 otherChip.isChecked = false
                             }
                         }
+                        for (i in 0 until chipGroupHoras.childCount) {
+                            val chipHora = chipGroupHoras.getChildAt(i) as Chip
+                            chipHora.isChecked = false
+                        }
+                        //setupHoras()
+                        loadReservas()
                     }
                 }
             }
@@ -257,16 +300,4 @@ class FragmentReservas : Fragment() {
             chipGroupHoras.addView(chip)
         }
     }
-
-
-    private fun cargarFragment(fragment: Fragment) {
-        // Asegúrate de que la actividad contenedora no sea nula
-        val fragmentManager = requireActivity().supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.drawer_layout, fragment) // cargamos en el drawer del MenuActivity el fragmento que queremos
-        fragmentTransaction.addToBackStack(null) // Permite volver al FragmentLogin al presionar el botón atrás
-        fragmentTransaction.commit()
-    }
-
-
 }
