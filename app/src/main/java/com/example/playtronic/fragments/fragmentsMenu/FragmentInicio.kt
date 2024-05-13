@@ -4,6 +4,11 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.BulletSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -166,7 +171,7 @@ class FragmentInicio : Fragment() {
 
     @SuppressLint("RestrictedApi")
     private fun comprobarReservasUsuario() {
-        val textViewReservas = view?.findViewById<TextView>(R.id.tvReservas) // Asegúrate de reemplazar 'textViewReservas' con el ID real de tu TextView
+        val textViewReservas = view?.findViewById<TextView>(R.id.tvReservas)
         val usuario = FirebaseAuth.getInstance().currentUser?.displayName
         val userEmail = FirebaseAuth.getInstance().currentUser?.email
 
@@ -176,45 +181,61 @@ class FragmentInicio : Fragment() {
                 .get()
                 .addOnSuccessListener { result ->
                     if (result.isEmpty) {
-                        textViewReservas?.text = "No has reservado ninguna pista... A qué esperas?"
+                        textViewReservas?.text = "No has reservado ninguna pista...\nA qué esperas?"
                     } else {
-                        val reservas = StringBuilder("Reservas:\n")
-                        for (document in result) {
+                        val reservas = result.map { document ->
                             val deporte = document.getString("deporte")
                             val pista = document.getString("pista")
                             val dia = document.getString("dia")
                             val hora = document.getString("hora")
-                            reservas.append("$deporte, $pista, $dia, $hora\n")
+                            "• $deporte, $pista, $dia, $hora h"
+                        }.joinToString("\n\n")
+
+                        val spannable = SpannableString(reservas)
+                        // Colorea cada punto amarillo
+                        var start = 0 // El índice del primer carácter del primer punto
+                        reservas.split("\n\n").forEach { reserva ->
+                            val end = start + 1
+                            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.yellow)), start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+                            start = end + reserva.length + 1 // Ajusta el índice de inicio para el próximo punto
                         }
-                        textViewReservas?.text = reservas.toString()
+
+                        textViewReservas?.text = spannable
                     }
                 }
                 .addOnFailureListener { exception ->
                     Log.w(TAG, "Error obteniendo las reservas.", exception)
                 }
         } else if (userEmail != null) {
-            // Si no hay reservas para el usuario, intenta obtener el nombre del usuario de la colección "users"
             db.collection("users").document(userEmail).get()
                 .addOnSuccessListener { document ->
                     val nombre = document.getString("nombre")
                     if (nombre != null) {
-                        // Busca las reservas para el nombre del usuario
                         db.collection("reservas")
                             .whereEqualTo("usuario", nombre)
                             .get()
                             .addOnSuccessListener { resultNombre ->
                                 if (resultNombre.isEmpty) {
-                                    textViewReservas?.text = "No has reservado ninguna pista... A qué esperas?"
+                                    textViewReservas?.text = "No has reservado ninguna pista...\nA qué esperas?"
                                 } else {
-                                    val reservas = StringBuilder("Reservas:\n")
-                                    for (document in resultNombre) {
+                                    val reservas = resultNombre.map { document ->
                                         val deporte = document.getString("deporte")
                                         val pista = document.getString("pista")
                                         val dia = document.getString("dia")
                                         val hora = document.getString("hora")
-                                        reservas.append("$deporte, $pista, $dia, $hora\n")
+                                        "• $deporte, $pista, $dia, $hora h"
+                                    }.joinToString("\n\n")
+
+                                    val spannable = SpannableString(reservas)
+                                    // Colorea cada punto amarillo
+                                    var start = 0 // El índice del primer carácter del primer punto
+                                    reservas.split("\n\n").forEach { reserva ->
+                                        val end = start + 1
+                                        spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.yellow)), start, end, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+                                        start = end + reserva.length + 1 // Ajusta el índice de inicio para el próximo punto
                                     }
-                                    textViewReservas?.text = reservas.toString()
+
+                                    textViewReservas?.text = spannable
                                 }
                             }
                             .addOnFailureListener { exception ->

@@ -94,7 +94,7 @@ class FragmentReservas : Fragment() {
         }
 
         buttonReservar.setOnClickListener {
-            val deporte = if (toggleGroupDeporte.checkedButtonId == R.id.btnTenis) "tenis" else "padel"
+            val deporte = if (toggleGroupDeporte.checkedButtonId == R.id.btnTenis) "Tenis" else "Padel"
             val pista = getSelectedChipText(gridLayoutPistas)
             val dia = getSelectedChipText(chipGroupFechas)
             val hora = getSelectedChipText(chipGroupHoras)
@@ -144,7 +144,7 @@ class FragmentReservas : Fragment() {
 
     @SuppressLint("RestrictedApi")
     private fun loadReservas() {
-        val deporteSeleccionado = if (toggleGroupDeporte.checkedButtonId == R.id.btnTenis) "tenis" else "padel"
+        val deporteSeleccionado = if (toggleGroupDeporte.checkedButtonId == R.id.btnTenis) "Tenis" else "Padel"
         val pistaSeleccionada = getSelectedChipText(gridLayoutPistas)
         val diaSeleccionado = getSelectedChipText(chipGroupFechas)
 

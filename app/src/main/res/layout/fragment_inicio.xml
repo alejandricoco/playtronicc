@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:background="@color/grey"
-             tools:context=".fragments.fragmentsMenu.FragmentInicio">
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   android:background="@color/grey"
+                                                   tools:context=".fragments.fragmentsMenu.FragmentInicio">
 
 
     <TextView
@@ -19,8 +20,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.1"
-            app:layout_constraintVertical_bias="0.1">
+            app:layout_constraintHorizontal_bias="0.055"
+            app:layout_constraintVertical_bias="0.09">
     </TextView>
 
 
@@ -35,12 +36,12 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_bias="0.215">
+            app:layout_constraintVertical_bias="0.21" android:id="@+id/cardView2">
 
         <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPagerImageSlider"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"/>
 
     </androidx.cardview.widget.CardView>
 
@@ -49,27 +50,129 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp"
-            android:orientation="horizontal" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.43"/>
-
-    <TextView
-            android:id="@+id/tvReservas"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Reservas:"
-            android:fontFamily="@font/robotomedium"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.1"
-            app:layout_constraintVertical_bias="0.5">
-    </TextView>
+            app:layout_constraintTop_toBottomOf="@+id/cardView2" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0.04"/>
+
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="90dp"
+            android:id="@+id/scrollingView"
+            app:layout_constraintTop_toBottomOf="@+id/layoutIndicator"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="800dp">
+
+            <TextView
+                    android:id="@+id/tvMisReservas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mis reservas"
+                    android:fontFamily="@font/robotomedium"
+                    android:textSize="20sp"
+                    android:textColor="@color/white" app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintVertical_bias="0.03"
+                    app:layout_constraintHorizontal_bias="0.055" app:layout_constraintTop_toTopOf="parent"/>
+
+            <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="20dp"
+                    app:cardBackgroundColor="@color/greyClaro"
+                    app:layout_constraintTop_toBottomOf="@+id/tvMisReservas"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintHorizontal_bias="0.054"
+                    app:layout_constraintVertical_bias="0.025" android:id="@+id/cardView3">
+
+                <TextView
+                        android:id="@+id/tvReservas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Padel, Pista 0, Sab 12, 00:00 h"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginLeft="15dp"
+                        android:fontFamily="@font/robotoregular"
+                        android:textSize="13sp"
+                        android:textColor="@color/white"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                    android:id="@+id/tvMiNivel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nivel"
+                    android:fontFamily="@font/robotomedium"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/cardView4"
+                    app:layout_constraintVertical_bias="0.03"
+                    app:layout_constraintHorizontal_bias="1.28" app:layout_constraintTop_toTopOf="parent"/>
+
+            <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="20dp"
+                    app:cardBackgroundColor="@color/greyClaro"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintTop_toBottomOf="@+id/tvMiNivel"
+                    app:layout_constraintStart_toEndOf="@+id/cardView3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintHorizontal_bias="0"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp" android:id="@+id/cardView4">
+
+                <TextView
+                        android:id="@+id/tvNivel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="Actualmente no dispones\nde nivel Playtronic.\nCompleta el cuestionario\nen la sección jugar\npara obtenerlo."
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginLeft="15dp"
+                        android:fontFamily="@font/robotoregular"
+                        android:textSize="13sp"
+                        android:textColor="@color/white"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                    android:id="@+id/tvNoticias"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Noticias"
+                    android:fontFamily="@font/robotomedium"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toBottomOf="@+id/cardView4"
+                    app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintHorizontal_bias="0.055"
+                    android:layout_marginTop="10dp">
+            </TextView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
