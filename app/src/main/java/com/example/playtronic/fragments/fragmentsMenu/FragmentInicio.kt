@@ -20,10 +20,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager.TAG
-import com.example.playtronic.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.example.playtronic.ImageSliderAdapter
-import com.example.playtronic.MenuActivity
+import com.example.playtronic.*
 import com.example.playtronic.fragments.fragmentsMain.FragmentLogin
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -51,6 +51,7 @@ class FragmentInicio : Fragment() {
         return inflater.inflate(R.layout.fragment_inicio, container, false)
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -87,6 +88,22 @@ class FragmentInicio : Fragment() {
         startImageSlider(images.size)
 
         comprobarReservasUsuario()
+
+        // A PARTIR DE AQUI SON LAS NOTICIAS
+        val newsRecyclerView: RecyclerView = view.findViewById(R.id.newsRecyclerView)
+        newsRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        db.collection("news")
+            .get()
+            .addOnSuccessListener { result ->
+                val newsList = result.map { document ->
+                    News(document.getString("image")!!, document.getString("title")!!)
+                }
+                newsRecyclerView.adapter = NewsAdapter(newsList)
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error obteniendo las noticias.", exception)
+            }
     }
 
     // ... (Mantén las funciones setupIndicators, setCurrentIndicator y startImageSlider aquí)
