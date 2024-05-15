@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.playtronic.InformationBanner
 import com.example.playtronic.Question
@@ -13,6 +15,8 @@ import com.example.playtronic.QuestionAdapter
 import com.example.playtronic.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class FragmentJugar : Fragment() {
@@ -34,6 +38,59 @@ class FragmentJugar : Fragment() {
         viewPager = view.findViewById(R.id.viewPager)
         val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
         submitButton = view.findViewById(R.id.submit_button)
+
+
+        val user = FirebaseAuth.getInstance().currentUser
+        val userEmail = user?.email
+        val twUser = user?.displayName
+        val db = FirebaseFirestore.getInstance()
+
+        if (userEmail != null) {
+            val googleDocRef = db.collection("users").document("(Google) $userEmail")
+            googleDocRef.get().addOnSuccessListener { googleDoc ->
+                if (googleDoc.exists() && googleDoc.getDouble("nivel") != null) {
+                    // El usuario ya ha calculado su nivel, no es necesario mostrar el formulario
+                    view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                    submitButton.visibility = View.GONE
+                    tabLayout.visibility = View.GONE
+                } else {
+                    val emailDocRef = db.collection("users").document(userEmail)
+                    emailDocRef.get().addOnSuccessListener { emailDoc ->
+                        if (emailDoc.exists() && emailDoc.getDouble("nivel") != null) {
+                            // El usuario ya ha calculado su nivel, no es necesario mostrar el formulario
+                            view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                            submitButton.visibility = View.GONE
+                            tabLayout.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+        } else if (twUser != null) {
+            val twitterDocRef = db.collection("users").document("(Twitter) $twUser")
+            twitterDocRef.get().addOnSuccessListener { twitterDoc ->
+                if (twitterDoc.exists()) {
+                    val nivel = twitterDoc.getDouble("nivel")
+                    if (nivel != null) {
+                        // El usuario ya ha calculado su nivel, no es necesario mostrar el formulario
+                        view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                        submitButton.visibility = View.GONE
+                        tabLayout.visibility = View.GONE
+                    } else {
+                        // El nivel es null, mostrar el formulario
+                        view.findViewById<CardView>(R.id.cardView).visibility = View.VISIBLE
+                        submitButton.visibility = View.VISIBLE
+                        tabLayout.visibility = View.VISIBLE
+                    }
+                } else {
+                    // El documento no existe, mostrar el formulario
+                    view.findViewById<CardView>(R.id.cardView).visibility = View.VISIBLE
+                    submitButton.visibility = View.VISIBLE
+                    tabLayout.visibility = View.VISIBLE
+                }
+            }
+        } else {
+            Toast.makeText(context, "Error al actualizar el nivel: Usuario no autenticado", Toast.LENGTH_SHORT).show()
+        }
 
 
 
@@ -103,22 +160,106 @@ class FragmentJugar : Fragment() {
             ))
         )
 
-        viewPager.adapter = QuestionAdapter(questions)
+        val questionAdapter = QuestionAdapter(questions)
+        viewPager.adapter = questionAdapter
 
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
 
         submitButton.setOnClickListener {
             // Aquí puedes obtener las respuestas y calcular el nivel del jugador
-            val answers = (viewPager.adapter as QuestionAdapter).getAnswers()
-            val level = calculateLevel(answers)
-            // ...
+            if (questionAdapter.allQuestionsAnswered()) {
+                val answers = questionAdapter.getAnswersIndices()
+                val level = calculateLevel(answers)
+
+                // Actualiza el nivel en Firebase
+                val user = FirebaseAuth.getInstance().currentUser
+                val twUser = user?.displayName
+                val userEmail = user?.email
+                val db = FirebaseFirestore.getInstance()
+
+                if (userEmail != null) {
+                    val googleDocRef = db.collection("users").document("(Google) $userEmail")
+                    googleDocRef.get().addOnSuccessListener { googleDoc ->
+                        if (googleDoc.exists()) {
+                            googleDocRef.update("nivel", level).addOnSuccessListener {
+                                // Haz que el CardView y el botón desaparezcan
+                                view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                                submitButton.visibility = View.GONE
+                                tabLayout.visibility = View.GONE
+                            }
+                        } else {
+                            val emailDocRef = db.collection("users").document(userEmail)
+                            emailDocRef.get().addOnSuccessListener { emailDoc ->
+                                if (emailDoc.exists()) {
+                                    emailDocRef.update("nivel", level).addOnSuccessListener {
+                                        // Haz que el CardView y el botón desaparezcan
+                                        view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                                        submitButton.visibility = View.GONE
+                                        tabLayout.visibility = View.GONE
+                                    }
+                                } else {
+                                    if (twUser != null) {
+                                        val twitterDocRef = db.collection("users").document("(Twitter) $twUser")
+                                        twitterDocRef.get().addOnSuccessListener { twitterDoc ->
+                                            if (twitterDoc.exists()) {
+                                                twitterDocRef.update("nivel", level).addOnSuccessListener {
+                                                    // Haz que el CardView y el botón desaparezcan
+                                                    view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                                                    submitButton.visibility = View.GONE
+                                                    tabLayout.visibility = View.GONE
+                                                }
+                                            } else {
+                                                Toast.makeText(context, "Error al actualizar el nivel: Documento no encontrado", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    } else {
+                                        Toast.makeText(context, "Error al actualizar el nivel: Usuario no autenticado", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (twUser != null) {
+                        val twitterDocRef = db.collection("users").document("(Twitter) $twUser")
+                        twitterDocRef.get().addOnSuccessListener { twitterDoc ->
+                            if (twitterDoc.exists()) {
+                                twitterDocRef.update("nivel", level).addOnSuccessListener {
+                                    // Haz que el CardView y el botón desaparezcan
+                                    view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                                    submitButton.visibility = View.GONE
+                                    tabLayout.visibility = View.GONE
+                                }
+                            } else {
+                                Toast.makeText(context, "Error al actualizar el nivel: Documento no encontrado", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, "Error al actualizar el nivel: Usuario no autenticado", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                Toast.makeText(context, "Debes contestar todas las preguntas para poder calcular tu nivel Playtronic.", Toast.LENGTH_SHORT).show()
+            }
         }
+
+
+
     }
 
-    private fun calculateLevel(answers: List<String>): Int {
-        // Aquí puedes implementar la lógica para calcular el nivel del jugador
-        // ...
-        return 0
+
+    private fun calculateLevel(answers: List<Int>): Double {
+        var total = 0.0
+        for (answer in answers) {
+            total += when (answer) {
+                0 -> 0.25
+                1 -> 0.50
+                2 -> 0.75
+                3 -> 1.0
+                else -> 0.0
+            }
+        }
+        return total
     }
 
 
