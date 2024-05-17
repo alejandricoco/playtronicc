@@ -89,6 +89,8 @@ class FragmentInicio : Fragment() {
 
         comprobarReservasUsuario()
 
+        actualizarNivelUsuario()
+
         // A PARTIR DE AQUI SON LAS NOTICIAS
         val newsRecyclerView: RecyclerView = view.findViewById(R.id.newsRecyclerView)
         newsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -267,6 +269,31 @@ class FragmentInicio : Fragment() {
                 }
         } else {
             Toast.makeText(context, "Por favor, inicia sesión para ver tus reservas.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun actualizarNivelUsuario() {
+        val tvNivel = view?.findViewById<TextView>(R.id.tvNivel)
+        val user = FirebaseAuth.getInstance().currentUser
+        val userName = user?.displayName
+
+        if (userName != null) {
+            val docRef = db.collection("users").whereEqualTo("usuario", userName)
+            docRef.get().addOnSuccessListener { result ->
+                if (!result.isEmpty) {
+                    val document = result.documents[0]
+                    val nivel = document.getDouble("nivel")
+                    if (nivel != null) {
+                        // Si el nivel no es null, actualiza el texto del TextView
+                        tvNivel?.text = "Tu nivel actual es: $nivel"
+                        tvNivel?.textSize = 20f // Aumenta el tamaño de la fuente
+                    } else {
+                        // Si el nivel es null, deja el mensaje que ya está
+                        tvNivel?.text = "Actualmente no dispones\nde nivel Playtronic.\nCompleta el cuestionario\nen la sección jugar\npara obtenerlo."
+                        tvNivel?.textSize = 13f // Tamaño de la fuente original
+                    }
+                }
+            }
         }
     }
 

@@ -227,32 +227,37 @@ class FragmentLogin : Fragment() {
     }
 
     private fun loginWithTwitter() {
-        // Configura el proveedor de OAuth para Twitter
         val provider = OAuthProvider.newBuilder("twitter.com")
 
-        // Inicia el flujo de autenticación con Twitter
-        val activity = requireActivity() // Obtiene la actividad que contiene este fragment
+        val activity = requireActivity()
         auth.startActivityForSignInWithProvider(activity, provider.build())
             .addOnSuccessListener { authResult ->
                 // El usuario ha iniciado sesión con éxito
-                // Aquí puedes obtener información del usuario o continuar con tu flujo de la app
                 val user = authResult.user
                 if (user != null) {
                     val usuario = user.displayName.toString()
                     val photourl = user.photoUrl.toString()
 
                     // Guardar la información del usuario en Firestore
-                    db.collection("users").document("(Twitter) " + usuario).set(
-                        hashMapOf(
-                            "usuario" to usuario,
-                            "email" to null, // No podemos obtener el email del usuario twitter
-                            "deporte" to null, // No podemos obtener el deporte favorito del usuario twitter
-                            "nivel" to null, // No podemos obtener el nivel del usuario twitter
-                            "fecha_nac" to null,// No podemos obtener la fecha de nacimiento del usuario twitter
-                            "photourl" to photourl,
-                            "plataforma" to "Twitter",
-                        )
-                    )
+                    val userDocRef = db.collection("users").document("(Twitter) $usuario")
+                    userDocRef.get().addOnSuccessListener { document ->
+                        if (document.exists()) {
+                            // El documento ya existe, no restablecer el nivel a null
+                        } else {
+                            // El documento no existe, crearlo
+                            userDocRef.set(
+                                hashMapOf(
+                                    "usuario" to usuario,
+                                    "email" to null, // No podemos obtener el email del usuario twitter
+                                    "deporte" to null, // No podemos obtener el deporte favorito del usuario twitter
+                                    "nivel" to null, // No podemos obtener el nivel del usuario twitter
+                                    "fecha_nac" to null,// No podemos obtener la fecha de nacimiento del usuario twitter
+                                    "photourl" to photourl,
+                                    "plataforma" to "Twitter",
+                                )
+                            )
+                        }
+                    }
                 }
                 llamarMenu()
 
@@ -311,17 +316,25 @@ class FragmentLogin : Fragment() {
                             val photourl = user.photoUrl?.toString() ?: "URL de foto desconocida"
 
                             // Guardar la información del usuario en Firestore
-                            db.collection("users").document("(Google) " + email).set(
-                                hashMapOf(
-                                    "usuario" to nombre,
-                                    "email" to email,
-                                    "deporte" to null, // No podemos obtener el deporte favorito del usuario de Google
-                                    "nivel" to null, // No podemos obtener el nivel del usuario de Google
-                                    "fecha_nac" to null, // No podemos obtener la fecha de nacimiento del usuario de Google
-                                    "photourl" to photourl,
-                                    "plataforma" to "Google",
-                                )
-                            )
+                            val userDocRef = db.collection("users").document("(Twitter) $nombre")
+                            userDocRef.get().addOnSuccessListener { document ->
+                                if (document.exists()) {
+                                    // El documento ya existe así que no restablecemos el nivel a null
+                                } else {
+                                    // El documento no existe, lo creamos
+                                    userDocRef.set(
+                                        hashMapOf(
+                                            "usuario" to nombre,
+                                            "email" to email, // No podemos obtener el email del usuario twitter
+                                            "deporte" to null, // No podemos obtener el deporte favorito del usuario twitter
+                                            "nivel" to null, // No podemos obtener el nivel del usuario twitter
+                                            "fecha_nac" to null,// No podemos obtener la fecha de nacimiento del usuario twitter
+                                            "photourl" to photourl,
+                                            "plataforma" to "Google",
+                                        )
+                                    )
+                                }
+                            }
                         }
                         llamarMenu()
                         Toast.makeText(requireActivity(), "Iniciada la sesión con Google", Toast.LENGTH_SHORT).show()

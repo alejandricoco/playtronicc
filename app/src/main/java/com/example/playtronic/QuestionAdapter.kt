@@ -59,7 +59,7 @@ class QuestionAdapter(private val items: List<Any>) : RecyclerView.Adapter<Recyc
 
         fun bind(question: Question, position: Int) {
             questionText.text = question.text
-            optionsGroup.setOnCheckedChangeListener(null) // Elimina el listener para evitar que se llame varias veces
+            optionsGroup.setOnCheckedChangeListener(null) // Eliminamos el listener para evitar que se llame varias veces
             optionsGroup.removeAllViews()
             val radioButtons = mutableListOf<RadioButton>()
             for (option in question.options) {
@@ -77,9 +77,9 @@ class QuestionAdapter(private val items: List<Any>) : RecyclerView.Adapter<Recyc
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                params.setMargins(0, 10, 0, 10) // Establece los márgenes (izquierda, arriba, derecha, abajo)
+                params.setMargins(0, 10, 0, 10) // Establecemos los márgenes (izquierda, arriba, derecha, abajo)
 
-                // Define el color del RadioButton cuando no está seleccionado
+                // Color del RadioButton cuando no está seleccionado
                 val colorStateList = ColorStateList(
                     arrayOf(
                         intArrayOf(-android.R.attr.state_checked), // Estado cuando no está seleccionado
@@ -97,11 +97,11 @@ class QuestionAdapter(private val items: List<Any>) : RecyclerView.Adapter<Recyc
                 optionsGroup.addView(radioButton)
             }
 
-            // Restaura el estado de la selección de las respuestas
+            // Restauramos el estado de la selección de las respuestas
             val radioButton = optionsGroup.children.find { (it as RadioButton).text == question.selectedOption }
             radioButton?.let { optionsGroup.check(it.id) }
 
-            // Establece el nuevo listener después de restaurar el estado
+            // Establecemos el nuevo listener después de restaurar el estado
             optionsGroup.setOnCheckedChangeListener { _, checkedId ->
                 val selectedButton = optionsGroup.findViewById<RadioButton>(checkedId)
                 if (selectedButton != null) {

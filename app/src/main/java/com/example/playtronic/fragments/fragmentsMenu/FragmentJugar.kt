@@ -49,7 +49,7 @@ class FragmentJugar : Fragment() {
             val googleDocRef = db.collection("users").document("(Google) $userEmail")
             googleDocRef.get().addOnSuccessListener { googleDoc ->
                 if (googleDoc.exists() && googleDoc.getDouble("nivel") != null) {
-                    // El usuario ya ha calculado su nivel, no es necesario mostrar el formulario
+                    // No es necesario mostrar el formulario pq el usuario ya ha calculado su nivel...
                     view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
                     submitButton.visibility = View.GONE
                     tabLayout.visibility = View.GONE
@@ -57,7 +57,7 @@ class FragmentJugar : Fragment() {
                     val emailDocRef = db.collection("users").document(userEmail)
                     emailDocRef.get().addOnSuccessListener { emailDoc ->
                         if (emailDoc.exists() && emailDoc.getDouble("nivel") != null) {
-                            // El usuario ya ha calculado su nivel, no es necesario mostrar el formulario
+                            // No es necesario mostrar el formulario pq el usuario ya ha calculado su nivel...
                             view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
                             submitButton.visibility = View.GONE
                             tabLayout.visibility = View.GONE
@@ -71,18 +71,18 @@ class FragmentJugar : Fragment() {
                 if (twitterDoc.exists()) {
                     val nivel = twitterDoc.getDouble("nivel")
                     if (nivel != null) {
-                        // El usuario ya ha calculado su nivel, no es necesario mostrar el formulario
+                        // No es necesario mostrar el formulario pq el usuario ya ha calculado su nivel...
                         view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
                         submitButton.visibility = View.GONE
                         tabLayout.visibility = View.GONE
                     } else {
-                        // El nivel es null, mostrar el formulario
+                        // El nivel es null, por lo que mostramos formulario
                         view.findViewById<CardView>(R.id.cardView).visibility = View.VISIBLE
                         submitButton.visibility = View.VISIBLE
                         tabLayout.visibility = View.VISIBLE
                     }
                 } else {
-                    // El documento no existe, mostrar el formulario
+                    // El documento no existe y mostramos el formulario
                     view.findViewById<CardView>(R.id.cardView).visibility = View.VISIBLE
                     submitButton.visibility = View.VISIBLE
                     tabLayout.visibility = View.VISIBLE
@@ -93,8 +93,6 @@ class FragmentJugar : Fragment() {
         }
 
 
-
-        // Aquí debes reemplazar con tus preguntas y opciones
         val questions = listOf(
             InformationBanner("Para jugar partidos competitivos en Playtronic, necesitas obtener tu nivel de juego.\n" + "\n" +
                     "Calcula tu nivel de juego Playtronic respondiendo a las siguientes preguntas con sinceridad."),
@@ -166,12 +164,11 @@ class FragmentJugar : Fragment() {
         TabLayoutMediator(tabLayout, viewPager) { _, _ -> }.attach()
 
         submitButton.setOnClickListener {
-            // Aquí puedes obtener las respuestas y calcular el nivel del jugador
             if (questionAdapter.allQuestionsAnswered()) {
                 val answers = questionAdapter.getAnswersIndices()
-                val level = calculateLevel(answers)
+                val level = calcularNivel(answers)
 
-                // Actualiza el nivel en Firebase
+                // Actualizamos el nivel en Firebase
                 val user = FirebaseAuth.getInstance().currentUser
                 val twUser = user?.displayName
                 val userEmail = user?.email
@@ -182,7 +179,7 @@ class FragmentJugar : Fragment() {
                     googleDocRef.get().addOnSuccessListener { googleDoc ->
                         if (googleDoc.exists()) {
                             googleDocRef.update("nivel", level).addOnSuccessListener {
-                                // Haz que el CardView y el botón desaparezcan
+                                // El cardview y el botón desaparecen
                                 view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
                                 submitButton.visibility = View.GONE
                                 tabLayout.visibility = View.GONE
@@ -192,7 +189,7 @@ class FragmentJugar : Fragment() {
                             emailDocRef.get().addOnSuccessListener { emailDoc ->
                                 if (emailDoc.exists()) {
                                     emailDocRef.update("nivel", level).addOnSuccessListener {
-                                        // Haz que el CardView y el botón desaparezcan
+                                        // El cardview y el botón desaparecen
                                         view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
                                         submitButton.visibility = View.GONE
                                         tabLayout.visibility = View.GONE
@@ -248,7 +245,7 @@ class FragmentJugar : Fragment() {
     }
 
 
-    private fun calculateLevel(answers: List<Int>): Double {
+    private fun calcularNivel(answers: List<Int>): Double {
         var total = 0.0
         for (answer in answers) {
             total += when (answer) {
@@ -267,7 +264,7 @@ class FragmentJugar : Fragment() {
         // Asegúrate de que la actividad contenedora no sea nula
         val fragmentManager = requireActivity().supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.drawer_layout, fragment) // cargamos en el drawer del MenuActivity el fragmento que queremos
+        fragmentTransaction.replace(R.id.drawer_layout, fragment)
         fragmentTransaction.addToBackStack(null) // Permite volver al FragmentLogin al presionar el botón atrás
         fragmentTransaction.commit()
     }

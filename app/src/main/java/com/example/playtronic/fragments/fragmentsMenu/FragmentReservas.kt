@@ -50,7 +50,7 @@ class FragmentReservas : Fragment() {
         toggleGroupDeporte = view.findViewById(R.id.toggleGroupDeporte)
         var usuario = FirebaseAuth.getInstance().currentUser?.displayName
 
-        // si usuario es null, obten de la coleccion users de firebase el campo usuario y asignalo a usuario
+        // si usuario es null, obtenemos de la coleccion users de firebase el campo usuario y se asigna al usuario
         if (usuario == null) {
             val userEmail = FirebaseAuth.getInstance().currentUser?.email
             if (userEmail != null) {
@@ -124,8 +124,8 @@ class FragmentReservas : Fragment() {
                 }
 
             Toast.makeText(context, "Reserva realizada con éxito", Toast.LENGTH_SHORT).show()
-            // ir al menuactivity
-            // Reinicia la MenuActivity
+
+
             val intent = Intent(activity, MenuActivity::class.java)
             startActivity(intent)
             activity?.finish()
