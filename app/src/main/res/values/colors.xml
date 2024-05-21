@@ -5,6 +5,7 @@
     <color name="yellow">#FFFFEB3B</color>
     <color name="grey">#353434</color>
     <color name="greyClaro">#4A4949</color>
+    <color name="greyMasClaro">#979595</color>
     <color name="transparent">
         #00000000
     </color>

@@ -316,7 +316,7 @@ class FragmentLogin : Fragment() {
                             val photourl = user.photoUrl?.toString() ?: "URL de foto desconocida"
 
                             // Guardar la información del usuario en Firestore
-                            val userDocRef = db.collection("users").document("(Twitter) $nombre")
+                            val userDocRef = db.collection("users").document("(Google) $email")
                             userDocRef.get().addOnSuccessListener { document ->
                                 if (document.exists()) {
                                     // El documento ya existe así que no restablecemos el nivel a null

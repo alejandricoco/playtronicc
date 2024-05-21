@@ -280,6 +280,7 @@ class FragmentReservas : Fragment() {
                 setTextColor(ContextCompat.getColorStateList(requireContext(), R.color.chip_text_color))
                 gravity = Gravity.CENTER
                 textAlignment = View.TEXT_ALIGNMENT_CENTER
+                textSize = 12f
                 setPadding(40, 0, 40, 0)
                 setOnCheckedChangeListener { checkedChip, isChecked ->
                     if (isChecked) {
@@ -293,7 +294,7 @@ class FragmentReservas : Fragment() {
                 }
             }
             val layoutParams = GridLayout.LayoutParams()
-            layoutParams.setMargins(10, 0, 10, 0) // Set margins in pixels. Adjust as needed.
+            layoutParams.setMargins(5, 0, 5, 0) // Set margins in pixels. Adjust as needed.
             layoutParams.columnSpec = GridLayout.spec(i % 5, 1f)
             layoutParams.rowSpec = GridLayout.spec(i / 5, 1f)
             chip.layoutParams = layoutParams

@@ -24,6 +24,7 @@
         <item name="textInputStyle">@style/EditTextTheme</item>
         <item name="colorPrimary">@color/yellow</item>
         <item name="colorSecondary">@color/yellow</item>
+        <item name="android:windowBackground">@color/grey</item>
     </style>
 
     <style name="RoundButton" parent="Widget.MaterialComponents.Button">
