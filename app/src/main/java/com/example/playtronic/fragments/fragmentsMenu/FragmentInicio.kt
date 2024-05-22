@@ -192,6 +192,7 @@ class FragmentInicio : Fragment() {
 
     @SuppressLint("RestrictedApi")
     private fun comprobarReservasUsuario() {
+        val progressBarReservas = view?.findViewById<ProgressBar>(R.id.progressBarReservas)
         val textViewReservas = view?.findViewById<TextView>(R.id.tvReservas)
         val usuario = FirebaseAuth.getInstance().currentUser?.displayName
         val userEmail = FirebaseAuth.getInstance().currentUser?.email
@@ -203,6 +204,8 @@ class FragmentInicio : Fragment() {
                 .addOnSuccessListener { result ->
                     if (isAdded) { // Verifica si el fragmento todavía está adjunto a la actividad
                         if (result.isEmpty) {
+                            progressBarReservas?.visibility = View.GONE
+                            textViewReservas?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                             textViewReservas?.text = "No has reservado ninguna pista...\nA qué esperas?"
                         } else {
                             val reservas = result.map { document ->
@@ -223,6 +226,9 @@ class FragmentInicio : Fragment() {
                             }
 
                             textViewReservas?.text = spannable
+                            //setea el color del texto a white
+                            textViewReservas?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                            progressBarReservas?.visibility = View.GONE
                         }
                     }
                 }
@@ -240,6 +246,8 @@ class FragmentInicio : Fragment() {
                             .addOnSuccessListener { resultNombre ->
                                 if (isAdded) { // Verifica si el fragmento todavía está adjunto a la actividad
                                     if (resultNombre.isEmpty) {
+                                        progressBarReservas?.visibility = View.GONE
+                                        textViewReservas?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
                                         textViewReservas?.text = "No has reservado ninguna pista...\nA qué esperas?"
                                     } else {
                                         val reservas = resultNombre.map { document ->
@@ -260,6 +268,8 @@ class FragmentInicio : Fragment() {
                                         }
 
                                         textViewReservas?.text = spannable
+                                        textViewReservas?.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                                        progressBarReservas?.visibility = View.GONE
                                     }
                                 }
                             }
@@ -281,6 +291,8 @@ class FragmentInicio : Fragment() {
     private fun actualizarNivelUsuario() {
         val tvNivel = view?.findViewById<TextView>(R.id.tvNivel)
         val progressBarCont = view?.findViewById<LinearLayout>(R.id.progressBarContainer)
+        val linearLayoutImgYTexto = view?.findViewById<LinearLayout>(R.id.linearLayoutImgYTexto)
+        val progressBarNivel = view?.findViewById<ProgressBar>(R.id.progressBarNivel)
         val iconoNivel = view?.findViewById<ImageView>(R.id.iconoNivel)
         val user = FirebaseAuth.getInstance().currentUser
         val userName = user?.displayName
@@ -305,6 +317,9 @@ class FragmentInicio : Fragment() {
                             tvNivel?.text = spannable
                             tvNivel?.textSize = 35f // Aumenta el tamaño de la fuente
                             tvNivel?.gravity = Gravity.CENTER_HORIZONTAL // Centra el texto
+                            progressBarNivel?.visibility = View.GONE
+                            progressBarCont?.visibility = View.VISIBLE
+                            linearLayoutImgYTexto?.visibility = View.VISIBLE
 
                             // Actualiza las ProgressBar
                             val progressBars = listOf(
@@ -323,6 +338,8 @@ class FragmentInicio : Fragment() {
                             // Si el nivel es null, deja el mensaje que ya está
                             //tvNivel?.text = "Actualmente no dispones\nde nivel Playtronic.\nCompleta el cuestionario\nen la sección jugar\npara obtenerlo."
                             tvNivel?.textSize = 13f // Tamaño de la fuente original
+                            progressBarNivel?.visibility = View.GONE
+                            linearLayoutImgYTexto?.visibility = View.VISIBLE
 
                             iconoNivel?.visibility = View.GONE
                             progressBarCont?.visibility = View.GONE

@@ -10,25 +10,6 @@
         android:background="#353434"
         tools:context=".fragments.fragmentsMain.FragmentAvisoEnlaceAcc">
 
-
-    <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textinputlayoutemail"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:hint="@string/email"
-            android:fontFamily="@font/robotoregular"
-            app:boxBackgroundColor="#4A4949"
-            app:boxCornerRadiusTopStart="30dp"
-            app:boxCornerRadiusTopEnd="30dp"
-            app:boxCornerRadiusBottomStart="30dp"
-            app:boxCornerRadiusBottomEnd="30dp"
-            style="@style/TextInputLayoutStyle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="0.365"/>
-
-
-
     <Button
             android:id="@+id/buttonAceptarEnlaceAcc"
             android:text="@string/aceptar"

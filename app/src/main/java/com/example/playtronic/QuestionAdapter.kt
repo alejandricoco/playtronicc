@@ -72,6 +72,7 @@ class QuestionAdapter(private val items: List<Any>) : RecyclerView.Adapter<Recyc
                 radioButton.id = View.generateViewId() // Genera un ID único
                 radioButton.text = option
                 radioButton.setTextColor(Color.WHITE)
+
                 // Define los márgenes
                 val params = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,

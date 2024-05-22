@@ -108,7 +108,15 @@
                         android:layout_marginLeft="15dp"
                         android:fontFamily="@font/robotoregular"
                         android:textSize="13sp"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/greyClaro"/>
+
+                <ProgressBar
+                        android:id="@+id/progressBarReservas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"
+                        android:visibility="visible"
+                        android:layout_gravity="center"/>
 
             </androidx.cardview.widget.CardView>
 
@@ -141,7 +149,17 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp" android:id="@+id/cardView4">
 
+                <ProgressBar
+                        android:id="@+id/progressBarNivel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"
+                        android:visibility="visible"
+                        android:layout_gravity="center"/>
+
                 <LinearLayout
+                        android:id="@+id/linearLayoutImgYTexto"
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -172,6 +190,7 @@
 
                 <LinearLayout
                         android:id="@+id/progressBarContainer"
+                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -226,6 +245,7 @@
                             android:layout_weight="1"
                             android:layout_margin="2dp"
                             android:progressDrawable="@drawable/progress_bar_yellow" />
+
 
                     <!-- Repite para las otras 4 ProgressBar, asegúrate de cambiar el id para cada una -->
 

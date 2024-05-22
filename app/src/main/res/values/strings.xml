@@ -19,6 +19,11 @@
     <string name="enlaceRestPass2">Te hemos enviado un enlace de restablecimiento de contraseña a tu correo electrónico.
         Por favor, revisa tu bandeja de entrada y sigue las instrucciones que te hemos enviado.
     </string>
+    <string name="tituloLvlObtenido">Enhorabuena! Has obtenido el nivel </string>
+    <string name="cuerpoLvlObtenido">A partir de ahora podrás jugar partidos competitivos en Playtronic. A medida de
+        ir ganando o perdiendo partidos, tu nivel de juego Playtronic irá subiendo o bajando. Recuerda, cada partido
+        es una oportunidad para aprender y mejorar. ¡Así que no te desanimes si las cosas no salen como esperabas al
+        principio! Con esfuerzo y dedicación, seguro que alcanzarás tus objetivos. ¡Disfruta del juego y buena suerte!</string>
     <string name="user">Usuario</string>
     <string name="email">Email</string>
     <string name="fecha_nacimiento">Fecha de nacimiento</string>

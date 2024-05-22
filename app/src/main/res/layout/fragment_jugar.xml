@@ -5,10 +5,25 @@
                                                    android:layout_height="match_parent"
                                                    android:background="@color/grey"
                                                    tools:context=".fragments.fragmentsMenu.FragmentJugar">
+    <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jugar"
+            android:fontFamily="@font/robotomedium"
+            android:textSize="30sp"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.055"
+            app:layout_constraintVertical_bias="0.09">
+    </TextView>
 
     <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="260dp"
+            android:layout_height="370dp"
             android:layout_marginRight="12.5dp"
             android:layout_marginLeft="12.5dp"
             app:cardBackgroundColor="@color/grey"
@@ -20,8 +35,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_bias="0.15" android:id="@+id/cardView">
-
+            app:layout_constraintVertical_bias="0.3" android:id="@+id/cardView"
+            android:visibility="gone">
 
 
         <androidx.viewpager2.widget.ViewPager2
@@ -30,21 +45,24 @@
                 android:layout_height="match_parent"/>
 
 
-
     </androidx.cardview.widget.CardView>
 
     <Button
             android:id="@+id/submit_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="320dp"
+            android:layout_height="62dp"
             android:text="Calcular nivel"
             style="@style/RoundButton"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:fontFamily="@font/robotomedium"
             android:backgroundTint="@color/button_amarillo_pressed"
             android:textColor="@color/black"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_bias="0.46"/>
+            app:layout_constraintVertical_bias="0.78"
+            android:visibility="gone"/>
 
     <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
@@ -57,6 +75,228 @@
             app:tabMode="fixed" app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_bias="0.4"/>
+            app:layout_constraintVertical_bias="0.61"
+            android:visibility="gone"/>
+
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleGroupCrearUnirmeA"
+            android:layout_width="350dp"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            app:checkedButton="@+id/btnTenis"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitulo" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0.05">
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCrear"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:fontFamily="@font/robotomedium"
+                android:backgroundTint="@color/button_background_color_toggle"
+                android:textColor="@color/button_text_color_toggle"
+                app:strokeColor="@color/yellow"
+                app:strokeWidth="2dp"
+                android:layout_weight="1"
+                android:text="Crear"
+                app:cornerRadius="20dp"/>
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUnirmeA"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:backgroundTint="@color/button_background_color_toggle"
+                android:textColor="@color/button_text_color_toggle"
+                app:strokeColor="@color/yellow"
+                app:strokeWidth="2dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:text="Unirme a"
+                app:cornerRadius="20dp"/>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+    <TextView
+            android:id="@+id/unPartidoDe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UN PARTIDO DE"
+            android:fontFamily="@font/robotomedium"
+            android:textSize="18sp"
+            android:textColor="@color/yellow"
+            app:layout_constraintTop_toBottomOf="@+id/toggleGroupCrearUnirmeA"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0">
+    </TextView>
+
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleGroupDeporte"
+            android:layout_width="350dp"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            app:checkedButton="@+id/btnTenis"
+            app:layout_constraintTop_toBottomOf="@+id/unPartidoDe"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0.04">
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTenis"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:fontFamily="@font/robotomedium"
+                android:backgroundTint="@color/button_background_color_toggle"
+                android:textColor="@color/button_text_color_toggle"
+                app:strokeColor="@color/yellow"
+                app:strokeWidth="2dp"
+                android:layout_weight="1"
+                android:text="@string/tenis"
+                app:cornerRadius="20dp"/>
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPadel"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:backgroundTint="@color/button_background_color_toggle"
+                android:textColor="@color/button_text_color_toggle"
+                app:strokeColor="@color/yellow"
+                app:strokeWidth="2dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:text="@string/padel"
+                app:cornerRadius="20dp"/>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewPartidos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/toggleGroupDeporte"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.1" app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"/>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilFechaPartido"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:hint="Fecha"
+            android:fontFamily="@font/robotoregular"
+            app:boxBackgroundColor="#4A4949"
+            app:boxCornerRadiusTopStart="30dp"
+            app:boxCornerRadiusTopEnd="30dp"
+            app:boxCornerRadiusBottomStart="30dp"
+            app:boxCornerRadiusBottomEnd="30dp"
+            style="@style/TextInputLayoutStyle"
+            app:layout_constraintTop_toBottomOf="@+id/toggleGroupDeporte"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.05">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tietFechaPartido"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:paddingStart="30dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/robotoregular"
+                android:textSize="16sp"
+                android:background="@null"
+                android:inputType="date"
+                android:focusable="false"
+                style="@style/EditTextTheme"
+        />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilHoraPartido"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:hint="Hora"
+            android:fontFamily="@font/robotoregular"
+            app:boxBackgroundColor="#4A4949"
+            app:boxCornerRadiusTopStart="30dp"
+            app:boxCornerRadiusTopEnd="30dp"
+            app:boxCornerRadiusBottomStart="30dp"
+            app:boxCornerRadiusBottomEnd="30dp"
+            style="@style/TextInputLayoutStyle"
+            app:layout_constraintTop_toBottomOf="@+id/tilFechaPartido"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.02">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tietHoraPartido"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:paddingStart="30dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/robotoregular"
+                android:textSize="16sp"
+                android:background="@null"
+                android:inputType="time"
+                style="@style/EditTextTheme"
+        />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNivelOponente"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:hint="Nivel de oponente/s"
+            android:fontFamily="@font/robotoregular"
+            app:boxBackgroundColor="#4A4949"
+            app:boxCornerRadiusTopStart="30dp"
+            app:boxCornerRadiusTopEnd="30dp"
+            app:boxCornerRadiusBottomStart="30dp"
+            app:boxCornerRadiusBottomEnd="30dp"
+            style="@style/TextInputLayoutStyle"
+            app:layout_constraintTop_toBottomOf="@+id/tilHoraPartido"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.02">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/acNivelOponente"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:paddingStart="30dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/robotoregular"
+                android:textSize="16sp"
+                android:background="@null"
+                style="@style/EditTextTheme" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+            android:id="@+id/buttonAceptarNivelSuccess"
+            android:text="Crear Partido"
+            android:textAllCaps="false"
+            android:layout_width="320dp"
+            android:layout_height="62dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintVertical_bias="0.9"
+            android:paddingLeft="20dp" android:paddingRight="20dp"
+            android:fontFamily="@font/robotomedium"
+            android:backgroundTint="@color/button_amarillo_pressed"
+            android:textColor="#000000" android:textSize="16sp"
+            app:layout_constraintHorizontal_bias="0.5"
+            style="@style/RoundButton"
+            android:letterSpacing="0.009"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
