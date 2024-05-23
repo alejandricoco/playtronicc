@@ -1,14 +1,13 @@
 package com.example.playtronic.fragments.fragmentsMenu
 
+import android.content.Context
 import android.os.Bundle
+import android.text.InputType
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
-import android.widget.Toast
+import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -294,18 +293,144 @@ class FragmentJugar : Fragment() {
     private fun frgNivelExitoso() {
         // Hacer visible el toggle y el RecyclerView
         val toggleGroupCrearUnirmeA = view?.findViewById<MaterialButtonToggleGroup>(R.id.toggleGroupCrearUnirmeA)
+        val tvUnPartidoDe = view?.findViewById<TextView>(R.id.tvUnPartidoDe)
         val toggleGroupDeporte = view?.findViewById<MaterialButtonToggleGroup>(R.id.toggleGroupDeporte)
+
+        toggleGroupCrearUnirmeA?.clearChecked()
+        toggleGroupDeporte?.clearChecked()
+
+        // VARIABLES CUANDO LA OPCION ES UNIRSE A UN PARTIDO
         val recyclerViewPartidos = view?.findViewById<RecyclerView>(R.id.recyclerViewPartidos)
-        val acNivelOponente = view?.findViewById<AutoCompleteTextView>(R.id.acNivelOponente)
-        val items = listOf("Nivel similar al mío", "No me importa el nivel")
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, items)
-        (acNivelOponente as? AutoCompleteTextView)?.setAdapter(adapter)
 
+        // VARIABLES CUANDO LA OPCION ES CREAR UN PARTIDO
+        val tilHorarioPreferido = view?.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilHorarioPreferido)
+        val actHorarioPreferido = view?.findViewById<AutoCompleteTextView>(R.id.actHorarioPreferido)
+        val tilNivelOponente = view?.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilNivelOponente)
+        val actNivelOponente = view?.findViewById<AutoCompleteTextView>(R.id.actNivelOponente)
+
+        val itemsNivelesOponente = listOf("Casi malo (1 - 3.4)", "Casi bueno (3.5 - 7.0)", "Leyenda (7.1 - 10.0)", "No me importa el nivel")
+        val adapterNivelesOponente = ArrayAdapter(requireContext(), R.layout.list_item, itemsNivelesOponente)
+        (actNivelOponente as? AutoCompleteTextView)?.setAdapter(adapterNivelesOponente)
+
+        val itemsHorarioPreferido = listOf("Mañana", "Tarde", "Mañana o tarde")
+        val adapterHorarioPreferido = ArrayAdapter(requireContext(), R.layout.list_item, itemsHorarioPreferido)
+        (actHorarioPreferido as? AutoCompleteTextView)?.setAdapter(adapterHorarioPreferido)
+
+        actHorarioPreferido?.setInputType(InputType.TYPE_NULL)
+        actNivelOponente?.setInputType(InputType.TYPE_NULL)
+
+        actHorarioPreferido?.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                (v as? AutoCompleteTextView)?.showDropDown()
+            }
+        }
+
+        actNivelOponente?.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                (v as? AutoCompleteTextView)?.showDropDown()
+            }
+        }
+
+        val btnCrearPartido = view?.findViewById<Button>(R.id.btnCrearPartido)
+
+        // Set visibility
         toggleGroupCrearUnirmeA?.visibility = View.VISIBLE
+        tvUnPartidoDe?.visibility = View.VISIBLE
         toggleGroupDeporte?.visibility = View.VISIBLE
-        recyclerViewPartidos?.visibility = View.VISIBLE
+        recyclerViewPartidos?.visibility = View.GONE
+        tilHorarioPreferido?.visibility = View.GONE
+        actHorarioPreferido?.visibility = View.GONE
+        tilNivelOponente?.visibility = View.GONE
+        actNivelOponente?.visibility = View.GONE
+        btnCrearPartido?.visibility = View.GONE
 
+        // Añadimos los listeners a los botones
+        view?.findViewById<Button>(R.id.btnCrear)?.setOnClickListener {
+            // Show the fields for creating a game
+            tilHorarioPreferido?.visibility = View.VISIBLE
+            actHorarioPreferido?.visibility = View.VISIBLE
+            tilNivelOponente?.visibility = View.VISIBLE
+            actNivelOponente?.visibility = View.VISIBLE
+            btnCrearPartido?.visibility = View.VISIBLE
+            toggleGroupDeporte?.clearChecked()
 
+            // Hide the RecyclerView
+            recyclerViewPartidos?.visibility = View.GONE
+        }
+
+        view?.findViewById<Button>(R.id.btnUnirmeA)?.setOnClickListener {
+            // Show the RecyclerView
+            recyclerViewPartidos?.visibility = View.VISIBLE
+
+            // Hide the fields for creating a game
+            tilHorarioPreferido?.visibility = View.GONE
+            actHorarioPreferido?.visibility = View.GONE
+            tilNivelOponente?.visibility = View.GONE
+            actNivelOponente?.visibility = View.GONE
+            btnCrearPartido?.visibility = View.GONE
+            toggleGroupDeporte?.clearChecked()
+
+            // AQUI MOSTRAMOS LOS PARTIDOS DISPONIBLES DESDE FIREBASE
+        }
+
+        // Add listener to the create game button
+        btnCrearPartido?.setOnClickListener {
+            // Validate the input fields
+            if (actHorarioPreferido?.text?.isNotEmpty() == true &&
+                actNivelOponente?.text?.isNotEmpty() == true) {
+
+                //Obtenemos el usuario actual
+                val user = FirebaseAuth.getInstance().currentUser
+                val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+                //Si el usuario firebase es nulo, se obtiene el nombre de usuario guardado en SharedPreferences
+                val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
+
+                // Get the selected sport
+                val selectedSportId = toggleGroupDeporte?.checkedButtonId ?: -1
+                val selectedSport = when (selectedSportId) {
+                    R.id.btnTenis -> "Tenis"
+                    R.id.btnPadel -> "Padel"
+                    else -> ""
+                }
+
+                // Get the opponent level
+                val nivelOponente = when (actNivelOponente?.text.toString()) {
+                    "Casi malo (1 - 3.4)" -> "Casi malo (1 - 3.4)"
+                    "Casi bueno (3.5 - 7.0)" -> "Casi bueno (3.5 - 7.0)"
+                    "Leyenda (7.1 - 10.0)" -> "Leyenda (7.1 - 10.0)"
+                    "No me importa el nivel" -> "Cualquier nivel"
+                    else -> ""
+                }
+
+                val horarioPreferido = when (actHorarioPreferido?.text.toString()) {
+                    "Mañana" -> "Mañana"
+                    "Tarde" -> "Tarde"
+                    "Mañana o tarde" -> "Mañana o tarde"
+                    else -> ""
+                }
+
+                // Create a new game
+                val nuevoPartido = hashMapOf(
+                    "creadoPor" to username,
+                    "deporte" to selectedSport,
+                    "horarioPreferido" to horarioPreferido,
+                    "nivelOponente" to nivelOponente
+                )
+
+                // Save the new game to Firebase
+                val db = FirebaseFirestore.getInstance()
+                db.collection("partidos")
+                    .add(nuevoPartido)
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "Partido creado con éxito", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(context, "Error al crear el partido: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                Toast.makeText(context, "Por favor, rellene todos los campos", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 
