@@ -374,6 +374,7 @@ class FragmentJugar : Fragment() {
             db.collection("partidos").get().addOnSuccessListener { result ->
                 val partidos = result.map { document ->
                     Partido(
+                        id = document.id,
                         creadoPor = document.getString("creadoPor") ?: "",
                         deporte = document.getString("deporte") ?: "",
                         horarioPreferido = document.getString("horarioPreferido") ?: "",
@@ -408,6 +409,7 @@ class FragmentJugar : Fragment() {
                 db.collection("partidos").get().addOnSuccessListener { result ->
                     val partidos = result.map { document ->
                         Partido(
+                            id = document.id,
                             creadoPor = document.getString("creadoPor") ?: "",
                             deporte = document.getString("deporte") ?: "",
                             horarioPreferido = document.getString("horarioPreferido") ?: "",
@@ -469,7 +471,8 @@ class FragmentJugar : Fragment() {
                     "creadoPor" to username,
                     "deporte" to selectedSport,
                     "horarioPreferido" to horarioPreferido,
-                    "nivelOponente" to nivelOponente
+                    "nivelOponente" to nivelOponente,
+                    "contador" to 0
                 )
 
                 // Save the new game to Firebase
@@ -478,6 +481,8 @@ class FragmentJugar : Fragment() {
                     .add(nuevoPartido)
                     .addOnSuccessListener {
                         Toast.makeText(context, "Partido creado con éxito", Toast.LENGTH_SHORT).show()
+                        val id = it.id
+                        //AQUI TENEMOS EL ID DEL PARTIDO CREADO NUEVO
                     }
                     .addOnFailureListener { e ->
                         Toast.makeText(context, "Error al crear el partido: ${e.message}", Toast.LENGTH_SHORT).show()
