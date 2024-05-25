@@ -17,6 +17,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 
@@ -441,6 +442,8 @@ class FragmentJugar : Fragment() {
                 val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
                 //Si el usuario firebase es nulo, se obtiene el nombre de usuario guardado en SharedPreferences
                 val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
+                val userId = user?.uid
+
 
                 // Get the selected sport
                 val selectedSportId = toggleGroupDeporte?.checkedButtonId ?: -1
@@ -466,13 +469,19 @@ class FragmentJugar : Fragment() {
                     else -> ""
                 }
 
+                if (selectedSport.isEmpty()) {
+                    Toast.makeText(context, "Por favor, selecciona un deporte", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
                 // Create a new game
                 val nuevoPartido = hashMapOf(
                     "creadoPor" to username,
                     "deporte" to selectedSport,
                     "horarioPreferido" to horarioPreferido,
                     "nivelOponente" to nivelOponente,
-                    "contador" to 0
+                    "contador" to 0,
+                    "usuariosUnidos" to mutableListOf(username)
                 )
 
                 // Save the new game to Firebase
@@ -483,6 +492,17 @@ class FragmentJugar : Fragment() {
                         Toast.makeText(context, "Partido creado con éxito", Toast.LENGTH_SHORT).show()
                         val id = it.id
                         //AQUI TENEMOS EL ID DEL PARTIDO CREADO NUEVO
+
+                        //AQUI SE DEBE AÑADIR EL USUARIO AL ARRAY DE USUARIOS UNIDOS
+                        db.collection("partidos").document(id)
+                            .update("usuariosUnidos", FieldValue.arrayUnion(username))
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "Usuario añadido al partido", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(context, "Error al añadir el usuario al partido: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
+
                     }
                     .addOnFailureListener { e ->
                         Toast.makeText(context, "Error al crear el partido: ${e.message}", Toast.LENGTH_SHORT).show()

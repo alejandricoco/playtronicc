@@ -45,7 +45,14 @@
                 android:textColor="@color/white"
                 android:text="Nivel: Casi bueno (3.5 - 7.0)" />
 
-
+        <TextView
+                android:id="@+id/tvUsuariosUnidos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:text="Usuarios unidos: " />
 
     </LinearLayout>
     <LinearLayout
@@ -66,17 +73,13 @@
                 android:text="Creado por: Pepito"
                 android:layout_gravity="end"/>
 
-        <Button
-                android:id="@+id/btnJoin"
+        <ImageButton
+                android:id="@+id/btnDelete"
                 android:layout_width="55dp"
                 android:layout_height="65dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
-                style="@style/RoundButton"
-                android:textSize="15sp"
-                android:fontFamily="@font/robotomedium"
-                android:text="+1"
-                android:textColor="@color/black"
+                android:src="@drawable/default_dot"
                 android:backgroundTint="@color/yellow"
                 android:layout_gravity="end"/>
 

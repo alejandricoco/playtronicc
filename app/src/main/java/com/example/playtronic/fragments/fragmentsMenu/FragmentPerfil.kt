@@ -10,8 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.FragmentManager.TAG
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.playtronic.Partido
+import com.example.playtronic.PartidoEliminarAdapter
 import com.example.playtronic.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -66,6 +71,39 @@ class FragmentPerfil : Fragment() {
                     // Si el usuario no tiene nombre de usuario, se muestra el nombre de usuario guardado en SharedPreferences
                     profileName.setText(nombreUsuario)
                 }
+        }
+
+        val recyclerViewMisPartidos = view.findViewById<RecyclerView>(R.id.recyclerViewMisPartidos)
+        recyclerViewMisPartidos.layoutManager = LinearLayoutManager(context)
+
+        // Obtén el ID del usuario
+        val usuarioId = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (usuarioId != null) {
+            // Accede a la colección de partidos
+            val db = FirebaseFirestore.getInstance()
+            db.collection("partidos").get().addOnSuccessListener { result ->
+                val partidos = result.map { document ->
+                    Partido(
+                        id = document.id,
+                        creadoPor = document.getString("creadoPor") ?: "",
+                        deporte = document.getString("deporte") ?: "",
+                        horarioPreferido = document.getString("horarioPreferido") ?: "",
+                        nivelOponente = document.getString("nivelOponente") ?: "",
+                        usuariosUnidos = (document.get("usuariosUnidos") as? List<String>) ?: listOf()
+                    )
+                }.filter { partido ->
+                    // Filtra los partidos creados por el usuario actual
+                    val user = FirebaseAuth.getInstance().currentUser
+                    val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+                    //Si el usuario firebase es nulo, se obtiene el nombre de usuario guardado en SharedPreferences
+                    val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
+                    partido.creadoPor == username || partido.usuariosUnidos.contains(username)
+                }
+
+                // Configura el RecyclerView
+                recyclerViewMisPartidos.adapter = PartidoEliminarAdapter(partidos.toMutableList())
+            }
         }
     }
 
