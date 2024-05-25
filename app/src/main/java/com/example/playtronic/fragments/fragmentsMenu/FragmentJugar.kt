@@ -9,12 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.example.playtronic.InformationBanner
-import com.example.playtronic.Question
-import com.example.playtronic.QuestionAdapter
-import com.example.playtronic.R
+import com.example.playtronic.*
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -301,6 +299,7 @@ class FragmentJugar : Fragment() {
 
         // VARIABLES CUANDO LA OPCION ES UNIRSE A UN PARTIDO
         val recyclerViewPartidos = view?.findViewById<RecyclerView>(R.id.recyclerViewPartidos)
+        recyclerViewPartidos?.layoutManager = LinearLayoutManager(context)
 
         // VARIABLES CUANDO LA OPCION ES CREAR UN PARTIDO
         val tilHorarioPreferido = view?.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilHorarioPreferido)
@@ -371,6 +370,62 @@ class FragmentJugar : Fragment() {
             toggleGroupDeporte?.clearChecked()
 
             // AQUI MOSTRAMOS LOS PARTIDOS DISPONIBLES DESDE FIREBASE
+            val db = FirebaseFirestore.getInstance()
+            db.collection("partidos").get().addOnSuccessListener { result ->
+                val partidos = result.map { document ->
+                    Partido(
+                        creadoPor = document.getString("creadoPor") ?: "",
+                        deporte = document.getString("deporte") ?: "",
+                        horarioPreferido = document.getString("horarioPreferido") ?: "",
+                        nivelOponente = document.getString("nivelOponente") ?: ""
+                    )
+                }.filter { partido ->
+                    // Filtra los partidos creados por el usuario actual
+                    val user = FirebaseAuth.getInstance().currentUser
+                    val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+                    //Si el usuario firebase es nulo, se obtiene el nombre de usuario guardado en SharedPreferences
+                    val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
+                    partido.creadoPor != username
+                }
+
+                // Configura el RecyclerView
+                recyclerViewPartidos?.adapter = PartidoAdapter(partidos)
+            }
+        }
+
+        //AQUI FILTRAMOS POR PADEL O TENIS LOS PARTIDOS DEL RECYCLERVIEW
+
+        toggleGroupDeporte?.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (isChecked) {
+                val selectedSport = when (checkedId) {
+                    R.id.btnTenis -> "Tenis"
+                    R.id.btnPadel -> "Padel"
+                    else -> ""
+                }
+
+                // AQUI MOSTRAMOS LOS PARTIDOS DISPONIBLES DESDE FIREBASE FILTRADOS POR DEPORTE
+                val db = FirebaseFirestore.getInstance()
+                db.collection("partidos").get().addOnSuccessListener { result ->
+                    val partidos = result.map { document ->
+                        Partido(
+                            creadoPor = document.getString("creadoPor") ?: "",
+                            deporte = document.getString("deporte") ?: "",
+                            horarioPreferido = document.getString("horarioPreferido") ?: "",
+                            nivelOponente = document.getString("nivelOponente") ?: ""
+                        )
+                    }.filter { partido ->
+                        // Filtra los partidos creados por el usuario actual
+                        val user = FirebaseAuth.getInstance().currentUser
+                        val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+                        //Si el usuario firebase es nulo, se obtiene el nombre de usuario guardado en SharedPreferences
+                        val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
+                        partido.creadoPor != username && partido.deporte == selectedSport
+                    }
+
+                    // Configura el RecyclerView
+                    recyclerViewPartidos?.adapter = PartidoAdapter(partidos)
+                }
+            }
         }
 
         // Add listener to the create game button
