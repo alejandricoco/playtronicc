@@ -296,6 +296,7 @@ class FragmentInicio : Fragment() {
         val iconoNivel = view?.findViewById<ImageView>(R.id.iconoNivel)
         val user = FirebaseAuth.getInstance().currentUser
         val userName = user?.displayName
+        val userEmail = user?.email
 
         if (userName != null) {
             val docRef = db.collection("users").whereEqualTo("usuario", userName)
@@ -348,6 +349,55 @@ class FragmentInicio : Fragment() {
                 }
             }
         }
+        else if (userEmail != null) {
+            val docRef = db.collection("users").document(userEmail)
+            docRef.get().addOnSuccessListener { document ->
+                if (isAdded) { // Verifica si el fragmento todavía está adjunto a la actividad
+                    val nivel = document.getDouble("nivel")
+                    if (nivel != null) {
+                        // Si el nivel no es null, actualiza el texto del TextView
+                        val nivelTexto = "$nivel/10"
+                        val spannable = SpannableString(nivelTexto)
+                        spannable.setSpan(RelativeSizeSpan(0.5f), nivelTexto.indexOf("/"), nivelTexto.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                        // Cambia el color del "nivel" a "greyMasClaro"
+                        val colorGreyMasClaro = ContextCompat.getColor(requireContext(), R.color.greyMasClaro)
+                        spannable.setSpan(ForegroundColorSpan(colorGreyMasClaro), nivelTexto.indexOf("/"), nivelTexto.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                        tvNivel?.text = spannable
+                        tvNivel?.textSize = 35f // Aumenta el tamaño de la fuente
+                        tvNivel?.gravity = Gravity.CENTER_HORIZONTAL // Centra el texto
+                        progressBarNivel?.visibility = View.GONE
+                        progressBarCont?.visibility = View.VISIBLE
+                        linearLayoutImgYTexto?.visibility = View.VISIBLE
+
+                        // Actualiza las ProgressBar
+                        val progressBars = listOf(
+                            view?.findViewById<ProgressBar>(R.id.progressBar1),
+                            view?.findViewById<ProgressBar>(R.id.progressBar2),
+                            view?.findViewById<ProgressBar>(R.id.progressBar3),
+                            view?.findViewById<ProgressBar>(R.id.progressBar4),
+                            view?.findViewById<ProgressBar>(R.id.progressBar5)
+                        )
+                        progressBars.forEachIndexed { index, progressBar ->
+                            val progress = ((nivel - index * 2) * 50).coerceAtLeast(0.0).coerceAtMost(100.0)
+                            progressBar?.progress = progress.toInt()
+                        }
+
+                    } else {
+                        // Si el nivel es null, deja el mensaje que ya está
+                        //tvNivel?.text = "Actualmente no dispones\nde nivel Playtronic.\nCompleta el cuestionario\nen la sección jugar\npara obtenerlo."
+                        tvNivel?.textSize = 13f // Tamaño de la fuente original
+                        progressBarNivel?.visibility = View.GONE
+                        linearLayoutImgYTexto?.visibility = View.VISIBLE
+
+                        iconoNivel?.visibility = View.GONE
+                        progressBarCont?.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
     }
 
 }

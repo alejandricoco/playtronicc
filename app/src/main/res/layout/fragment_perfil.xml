@@ -47,9 +47,10 @@
             android:layout_height="wrap_content"
             android:text="Mis partidos"
             app:layout_constraintVertical_bias="0.05"
-            app:layout_constraintHorizontal_bias="0.1"
-            android:textSize="20sp"
+            app:layout_constraintHorizontal_bias="0.055"
+            android:textSize="22sp"
             android:textColor="@color/white"
+            android:fontFamily="@font/robotomedium"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/card_view" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

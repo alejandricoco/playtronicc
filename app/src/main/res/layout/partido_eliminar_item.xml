@@ -41,6 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:layout_marginBottom="10dp"
                 android:textSize="15sp"
                 android:textColor="@color/white"
                 android:text="Nivel: Casi bueno (3.5 - 7.0)" />
@@ -73,10 +74,25 @@
                 android:text="Creado por: Pepito"
                 android:layout_gravity="end"/>
 
-        <ImageButton
+        <Button
                 android:id="@+id/btnDelete"
-                android:layout_width="55dp"
-                android:layout_height="65dp"
+                style="@style/RoundButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/baseline_delete_24"
+                android:backgroundTint="@color/yellow"
+                android:layout_gravity="end"/>
+
+        <Button
+                android:id="@+id/btnLeave"
+                android:text="Abandonar"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/RoundButton"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
                 android:src="@drawable/default_dot"
