@@ -17,7 +17,7 @@ tools:showIn = "navigation_view">
         <item
                 android:id="@+id/nav_ranking"
                 android:icon="@drawable/baseline_stacked_bar_chart_24"
-                android:title="@string/ranking" />
+                android:title="@string/ranking"/>
 
         <item
                 android:id="@+id/nav_campeonatos"

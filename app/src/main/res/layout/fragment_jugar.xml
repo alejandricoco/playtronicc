@@ -36,7 +36,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_bias="0.3" android:id="@+id/cardView"
-            android:visibility="gone">
+            android:visibility="visible">
 
 
         <androidx.viewpager2.widget.ViewPager2
@@ -62,7 +62,7 @@
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_bias="0.78"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
     <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
@@ -76,7 +76,7 @@
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_bias="0.61"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
 
     <com.google.android.material.button.MaterialButtonToggleGroup
@@ -89,7 +89,8 @@
             app:checkedButton="@+id/btnTenis"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitulo" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0.05">
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0.05"
+            android:visibility="gone">
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCrear"
@@ -130,7 +131,8 @@
             android:textColor="@color/yellow"
             app:layout_constraintTop_toBottomOf="@+id/toggleGroupCrearUnirmeA"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0">
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintVertical_bias="0"
+            android:visibility="gone">
     </TextView>
 
 
@@ -145,7 +147,8 @@
             app:layout_constraintTop_toBottomOf="@+id/tvUnPartidoDe"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.04">
+            app:layout_constraintVertical_bias="0.04"
+            android:visibility="gone">
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnTenis"
@@ -193,7 +196,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintVertical_bias="0.1"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
     </ScrollView>
 
 
@@ -212,7 +215,8 @@
             app:layout_constraintTop_toBottomOf="@+id/toggleGroupDeporte"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_bias="0.05">
+            app:layout_constraintVertical_bias="0.05"
+            android:visibility="gone">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/actHorarioPreferido"
@@ -223,7 +227,8 @@
                 android:fontFamily="@font/robotoregular"
                 android:textSize="16sp"
                 android:background="@null"
-                style="@style/EditTextTheme"/>
+                style="@style/EditTextTheme"
+                android:visibility="gone"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -243,7 +248,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_bias="0.02" app:layout_constraintTop_toBottomOf="@+id/tilHorarioPreferido">
+            app:layout_constraintVertical_bias="0.02" app:layout_constraintTop_toBottomOf="@+id/tilHorarioPreferido"
+            android:visibility="gone">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/actNivelOponente"
@@ -254,7 +260,8 @@
                 android:fontFamily="@font/robotoregular"
                 android:textSize="16sp"
                 android:background="@null"
-                style="@style/EditTextTheme"/>
+                style="@style/EditTextTheme"
+                android:visibility="gone"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -273,6 +280,7 @@
             android:textColor="#000000" android:textSize="16sp"
             app:layout_constraintHorizontal_bias="0.5"
             style="@style/RoundButton"
-            android:letterSpacing="0.009"/>
+            android:letterSpacing="0.009"
+            android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

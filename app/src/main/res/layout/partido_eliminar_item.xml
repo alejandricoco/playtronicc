@@ -50,6 +50,7 @@
                 android:id="@+id/tvUsuariosUnidos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:textSize="15sp"
                 android:textColor="@color/white"
@@ -57,7 +58,7 @@
 
     </LinearLayout>
     <LinearLayout
-            android:layout_width="190dp"
+            android:layout_width="215dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="8dp"
@@ -77,8 +78,8 @@
         <Button
                 android:id="@+id/btnDelete"
                 style="@style/RoundButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
                 android:background="@drawable/baseline_delete_24"

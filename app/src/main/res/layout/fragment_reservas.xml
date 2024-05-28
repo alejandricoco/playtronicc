@@ -148,14 +148,18 @@
 
     <Button
             android:id="@+id/button_reservar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="320dp"
+            android:layout_height="60dp"
             android:text="Reservar pista"
+            android:fontFamily="@font/robotomedium"
+            android:textSize="16sp"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintVertical_bias="0.9"
+            android:textAllCaps="false"
             android:backgroundTint="@color/button_amarillo_pressed"
+            android:letterSpacing="0.02"
             style="@style/RoundButton"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

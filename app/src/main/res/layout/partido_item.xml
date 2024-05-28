@@ -41,6 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:layout_marginBottom="10dp"
                 android:textSize="15sp"
                 android:textColor="@color/white"
                 android:text="Nivel: Casi bueno (3.5 - 7.0)" />
@@ -49,7 +50,7 @@
 
     </LinearLayout>
     <LinearLayout
-            android:layout_width="190dp"
+            android:layout_width="215dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="8dp"
@@ -79,6 +80,18 @@
                 android:textColor="@color/black"
                 android:backgroundTint="@color/yellow"
                 android:layout_gravity="end"/>
+
+        <TextView
+                android:id="@+id/textViewCompleto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="7.5dp"
+                android:textSize="19sp"
+                android:textColor="@color/yellow"
+                android:text="COMPLETO"
+                android:layout_gravity="end"
+                android:visibility="gone"/>
 
     </LinearLayout>
 

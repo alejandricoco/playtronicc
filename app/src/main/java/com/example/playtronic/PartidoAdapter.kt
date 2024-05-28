@@ -70,7 +70,7 @@ class PartidoAdapter(private val partidos: List<Partido>) : RecyclerView.Adapter
         }
 
         // Actualiza la interfaz de usuario en función del contador
-        updateUI(partido, btnJoin)
+        updateUI(partido, holder)
     }
 
     private fun handleUserJoining(userNivel: Double, partido: Partido, holder: PartidoViewHolder, username: String?, btnJoin: Button) {
@@ -98,7 +98,7 @@ class PartidoAdapter(private val partidos: List<Partido>) : RecyclerView.Adapter
                                             contador = partido.contador + 1,
                                             usuariosUnidos = partido.usuariosUnidos + username
                                         )
-                                        updateUI(updatedPartido, btnJoin)
+                                        updateUI(updatedPartido, holder)
                                     }
                                 }
                             }
@@ -112,17 +112,21 @@ class PartidoAdapter(private val partidos: List<Partido>) : RecyclerView.Adapter
         }
     }
 
-    private fun updateUI(partido: Partido, btnJoin: Button) {
+    private fun updateUI(partido: Partido, holder: PartidoViewHolder) {
         if (partido.id.isNotEmpty()) {
             val db = FirebaseFirestore.getInstance()
             val partidoRef = db.collection("partidos").document(partido.id)
             partidoRef.get().addOnSuccessListener { snapshot ->
                 val partidoActualizado = snapshot.toObject(Partido::class.java)
                 if (partidoActualizado != null) {
+                    val btnJoin = holder.view.findViewById<Button>(R.id.btnJoin)
+                    val texViewCompleto = holder.view.findViewById<TextView>(R.id.textViewCompleto)
                     if (partidoActualizado.deporte == "Padel" && partidoActualizado.contador >= 3 || partidoActualizado.deporte == "Tenis" && partidoActualizado.contador >= 1) {
                         btnJoin.visibility = View.GONE
+                        texViewCompleto.visibility = View.VISIBLE
                     } else {
                         btnJoin.visibility = View.VISIBLE
+                        texViewCompleto.visibility = View.GONE
                         val espaciosDisponibles = if (partidoActualizado.deporte == "Padel") 3 - partidoActualizado.contador else 1 - partidoActualizado.contador
                         btnJoin.text = "+$espaciosDisponibles"
                     }

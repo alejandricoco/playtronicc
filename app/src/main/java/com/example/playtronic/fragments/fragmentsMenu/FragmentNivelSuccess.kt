@@ -1,9 +1,12 @@
 package com.example.playtronic.fragments.fragmentsMenu
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +15,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.fragment.app.FragmentManager.TAG
 import com.example.playtronic.MenuActivity
 import com.example.playtronic.R
 import com.example.playtronic.fragments.fragmentsMain.FragmentLogin
@@ -28,6 +32,7 @@ class FragmentNivelSuccess : Fragment() {
     private lateinit var progressBarNivel: ProgressBar
     private lateinit var tvCalculandoNivel: TextView
     private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
 
     override fun onCreateView(
@@ -73,29 +78,60 @@ class FragmentNivelSuccess : Fragment() {
     }
 
     private fun actualizarNivelUsuario() {
-        val tvTitulito = view?.findViewById<TextView>(R.id.tvTitulito)
-        val user = FirebaseAuth.getInstance().currentUser
-        val userName = user?.displayName
+        val currentUser = auth.currentUser
+        val userName = currentUser?.displayName ?: ""
+        val userEmail = currentUser?.email ?: ""
 
-        if (userName != null) {
-            val docRef = db.collection("users").whereEqualTo("usuario", userName)
-            docRef.get().addOnSuccessListener { result ->
-                if (isAdded) { // Verifica si el fragmento todavía está adjunto a la actividad
-                    if (!result.isEmpty) {
-                        val document = result.documents[0]
-                        val nivel = document.getDouble("nivel")
-                        if (nivel != null) {
-                            // Si el nivel no es null, actualiza el texto del TextView
-                            val nivelTexto = "¡Enhorabuena!\nHas obtenido el nivel $nivel"
-                            tvTitulito?.text = nivelTexto
-                        } else {
-                            // No hacemos nada si el nivel es null
-                        }
-                    }
-                }
-            }
+        if (userName.isNotEmpty()) {
+            buscarNivelPorUsuario(userName, userEmail)
+        } else {
+            buscarPorCorreoElectronico(userEmail)
         }
     }
+
+    @SuppressLint("RestrictedApi")
+    private fun buscarNivelPorUsuario(userName: String, userEmail: String) {
+        val docRef = db.collection("users").whereEqualTo("usuario", userName)
+        docRef.get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val documentSnapshot = querySnapshot.documents[0]
+                    val nivel = documentSnapshot.getDouble("nivel")
+                    if (nivel != null) {
+                        val textViewNivel: TextView = view?.findViewById(R.id.tvTitulito) ?: return@addOnSuccessListener
+                        textViewNivel.text = "¡Enhorabuena!\nHas obtenido el nivel " + nivel.toString()
+                    }
+                } else {
+                    Log.d(TAG, "No se encontraron documentos para usuario: $userName")
+                    buscarPorCorreoElectronico(userEmail)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error obteniendo documentos: ", exception)
+            }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun buscarPorCorreoElectronico(userEmail: String) {
+        val docRef = db.collection("users").whereEqualTo("email", userEmail)
+        docRef.get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val documentSnapshot = querySnapshot.documents[0]
+                    val nivel = documentSnapshot.getDouble("nivel")
+                    if (nivel != null) {
+                        val textViewNivel: TextView = view?.findViewById(R.id.tvTitulito) ?: return@addOnSuccessListener
+                        textViewNivel.text = "¡Enhorabuena!\nHas obtenido el nivel " + nivel.toString()
+                    }
+                } else {
+                    Log.d(TAG, "No se encontraron documentos para email: $userEmail")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error obteniendo documentos: ", exception)
+            }
+    }
+
 
 
     private fun cargarFragment(fragment: Fragment) {

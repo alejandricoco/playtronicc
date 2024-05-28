@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:padding="8dp">
+
+    <TextView
+            android:id="@+id/tvUsername"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Usuario"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+    <TextView
+            android:id="@+id/tvPJ"
+            android:layout_width="0dp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="PJ"
+            android:gravity="end"
+            android:textSize="16sp" />
+
+    <TextView
+            android:id="@+id/tvPG"
+            android:layout_width="0dp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="PG"
+            android:gravity="end"
+            android:textSize="16sp" />
+
+    <TextView
+            android:id="@+id/tvPP"
+            android:layout_width="0dp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="PP"
+            android:textSize="16sp"
+            android:gravity="end"/>
+
+    <TextView
+            android:id="@+id/tvPts"
+            android:layout_width="0dp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Pts"
+            android:textSize="16sp"
+            android:gravity="end"/>
+
+</LinearLayout>
