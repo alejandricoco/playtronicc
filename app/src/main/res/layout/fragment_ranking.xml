@@ -60,11 +60,11 @@
             android:visibility="gone"/>
 
     <Button
-            android:id="@+id/btnSubirResultado"
+            android:id="@+id/btnSubirResultadoVerResultados"
             android:layout_width="350dp"
             android:layout_height="60dp"
             style="@style/RoundButton"
-            android:text="Subir un resultado"
+            android:text="Ver mis resultados"
             android:backgroundTint="@color/button_amarillo_pressed"
             android:textColor="@color/black"
             android:textAllCaps="false"
@@ -87,7 +87,7 @@
             app:boxCornerRadiusBottomStart="30dp"
             app:boxCornerRadiusBottomEnd="30dp"
             style="@style/TextInputLayoutStyle" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnSubirResultado" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnSubirResultadoVerResultados" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintVertical_bias="0.07">
 
@@ -266,7 +266,7 @@
             android:layout_height="60dp"
             style="@style/RoundButton"
             android:backgroundTint="@color/button_amarillo_pressed"
-            android:text="Hecho"
+            android:text="Guardar Resultado"
             android:textColor="@color/black"
             android:textAllCaps="false"
             android:textSize="16sp"
@@ -275,6 +275,16 @@
             app:layout_constraintTop_toBottomOf="@+id/toggleGroupRankingResultados"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintVertical_bias="0.91"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewResultados"
+            android:layout_width="411dp"
+            android:layout_height="200dp"
+            android:background="@color/white"
+            android:backgroundTint="@color/greyClaro"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"/>
 
 
 

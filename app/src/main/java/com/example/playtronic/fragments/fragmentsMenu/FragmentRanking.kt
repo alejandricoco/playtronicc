@@ -1,23 +1,28 @@
 package com.example.playtronic.fragments.fragmentsMenu
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.Context
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
-import android.widget.Spinner
+import android.widget.*
+import androidx.fragment.app.FragmentManager.TAG
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playtronic.Player
 import com.example.playtronic.R
+import com.example.playtronic.Resultado
+import com.example.playtronic.ResultadoAdapter
 import com.google.android.material.button.MaterialButtonToggleGroup
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class FragmentRanking : Fragment() {
@@ -42,6 +47,7 @@ class FragmentRanking : Fragment() {
         return view
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -56,9 +62,10 @@ class FragmentRanking : Fragment() {
             spinner.adapter = adapter
         }
 
-        val otherViews = arrayOf(R.id.btnSubirResultado, R.id.btnHecho, R.id.tilTenisPadel, R.id.fecha, R.id.tilVictoriaDerrota, R.id.set1, R.id.set2, R.id.set3) + spinnerIds
+        val otherViews = arrayOf(R.id.btnHecho, R.id.tilTenisPadel, R.id.fecha, R.id.tilVictoriaDerrota, R.id.set1, R.id.set2, R.id.set3) + spinnerIds
         for (id in otherViews) {
             view.findViewById<View>(id).visibility = View.GONE
+            view.findViewById<Button>(R.id.btnSubirResultadoVerResultados).visibility = View.GONE
         }
 
         // Configurar el toggle group
@@ -70,17 +77,20 @@ class FragmentRanking : Fragment() {
             if (isChecked) { // Solo cambiar la visibilidad cuando un botón se selecciona
                 if (checkedId == R.id.btnRanking) {
                     recyclerView.visibility = View.VISIBLE
+                    view.findViewById<Button>(R.id.btnSubirResultadoVerResultados).visibility = View.GONE
                     for (id in otherViews) {
                         view.findViewById<View>(id).visibility = View.GONE
                     }
                 } else if (checkedId == R.id.btnResultados) {
                     recyclerView.visibility = View.GONE
+                    view.findViewById<Button>(R.id.btnSubirResultadoVerResultados).visibility = View.VISIBLE
                     for (id in otherViews) {
                         view.findViewById<View>(id).visibility = View.VISIBLE
                     }
                 }
             }
         }
+
 
         // Configurar los auto complete text views
         val tenisPadelOptions = arrayOf("Tenis", "Padel")
@@ -118,9 +128,114 @@ class FragmentRanking : Fragment() {
         }
 
 
-        val btnSubirResultado = view.findViewById<Button>(R.id.btnSubirResultado)
+        val btnSubirResultado = view.findViewById<Button>(R.id.btnSubirResultadoVerResultados)
         btnSubirResultado.setOnClickListener {
+            val isViewingResults = btnSubirResultado.text.toString() == "Ver mis resultados"
+            if (isViewingResults) {
+                // Cambiar el texto del botón a "Subir Resultado"
+                btnSubirResultado.text = "Subir Resultado"
+                // Ocultar los otros elementos de la vista
 
+                for (id in otherViews) {
+                    view.findViewById<View>(id).visibility = View.GONE
+                }
+                // Mostrar el RecyclerView
+                val recyclerViewResultados: RecyclerView = view.findViewById(R.id.recyclerViewResultados)
+                recyclerViewResultados.layoutManager = LinearLayoutManager(context)
+                recyclerViewResultados.visibility = View.VISIBLE
+
+
+                val user = FirebaseAuth.getInstance().currentUser
+                val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+                val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
+                val db = FirebaseFirestore.getInstance()
+                db.collection("resultados")
+                    .whereEqualTo("usuario", username)
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        val resultados = documents.map { document ->
+                            Resultado(
+                                document.getString("deporte")!!,
+                                document.getString("fecha")!!,
+                                document.getString("set1_1")!!,
+                                document.getString("set1_2")!!,
+                                document.getString("set2_1")!!,
+                                document.getString("set2_2")!!,
+                                document.getString("set3_1")!!,
+                                document.getString("set3_2")!!,
+                                document.getString("usuario")!!,
+                                document.getString("winlose")!!
+                            )
+                        }
+                        val adapter = ResultadoAdapter(resultados)
+                        recyclerViewResultados.adapter = adapter
+                    }
+
+            } else {
+                // Cambiar el texto del botón a "Ver mis resultados"
+                btnSubirResultado.text = "Ver mis resultados"
+                // Mostrar los otros elementos de la vista
+                for (id in otherViews) {
+                    view.findViewById<View>(id).visibility = View.VISIBLE
+                }
+                // Ocultar el RecyclerView
+                val recyclerViewResultados: RecyclerView = view.findViewById(R.id.recyclerViewResultados)
+                recyclerViewResultados.visibility = View.GONE
+            }
+        }
+
+        val btnGuardarResultado = view.findViewById<Button>(R.id.btnHecho)
+        btnGuardarResultado.setOnClickListener {
+
+            val user = FirebaseAuth.getInstance().currentUser
+            val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+            val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
+            // Obtener los datos de los campos de entrada
+            val deporte = tenisPadelACTV.text.toString()
+            val fecha = fechaInput.text.toString()
+            val winlose = victoriaDerrotaACTV.text.toString()
+            val usuario = username
+            val set1_1 = view.findViewById<Spinner>(R.id.reSet1_1).selectedItem.toString()
+            val set1_2 = view.findViewById<Spinner>(R.id.reSet1_2).selectedItem.toString()
+            val set2_1 = view.findViewById<Spinner>(R.id.reSet2_1).selectedItem.toString()
+            val set2_2 = view.findViewById<Spinner>(R.id.reSet2_2).selectedItem.toString()
+            val set3_1 = view.findViewById<Spinner>(R.id.reSet3_1).selectedItem.toString()
+            val set3_2 = view.findViewById<Spinner>(R.id.reSet3_2).selectedItem.toString()
+
+
+            // Comprobar que los campos requeridos estén completos
+            if (deporte.isEmpty() || fecha.isEmpty() || winlose.isEmpty() || set1_1 == "-" || set1_2 == "-" || set2_1 == "-" || set2_2 == "-" ) {
+                Toast.makeText(context, "Por favor, completa todos los campos requeridos", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+
+            // Crear un nuevo objeto con los datos
+            val resultado = hashMapOf(
+                "deporte" to deporte,
+                "fecha" to fecha,
+                "winlose" to winlose,
+                "usuario" to usuario,
+                "set1_1" to set1_1,
+                "set1_2" to set1_2,
+                "set2_1" to set2_1,
+                "set2_2" to set2_2,
+                "set3_1" to set3_1,
+                "set3_2" to set3_2
+            )
+
+            // Obtener una referencia a la base de datos de Firebase
+            val db = FirebaseFirestore.getInstance()
+
+            // Agregar un nuevo documento a la colección "resultados"
+            db.collection("resultados")
+                .add(resultado)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error adding document", e)
+                }
         }
 
         // Aquí debes obtener la lista de jugadores desde Firestore
