@@ -27,7 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class FragmentRanking : Fragment() {
 
-
+    private lateinit var tenisPadelACTV: AutoCompleteTextView
+    private lateinit var fechaInput: TextInputEditText
+    private lateinit var victoriaDerrotaACTV: AutoCompleteTextView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,6 +44,10 @@ class FragmentRanking : Fragment() {
         for (id in otherViews) {
             view.findViewById<View>(id).visibility = View.GONE
         }
+
+        tenisPadelACTV = view.findViewById(R.id.actTenisPadel)
+        victoriaDerrotaACTV = view.findViewById(R.id.actVictoriaDerrota)
+        fechaInput = view.findViewById(R.id.inputFecha)
 
 
         return view
@@ -114,7 +120,8 @@ class FragmentRanking : Fragment() {
                     }
 
                     // Calcular Pts
-                    player.Pts = player.PG * 10 - player.PP * 3
+                    val potentialPts = player.PG * 10 - player.PP * 3
+                    player.Pts = if (potentialPts > 0) potentialPts else 0
                 }
 
                 val players = playersData.values.toList().sortedByDescending { it.Pts }
@@ -135,6 +142,47 @@ class FragmentRanking : Fragment() {
                         view.findViewById<View>(id).visibility = View.GONE
                     }
 
+                    // Obtener todos los resultados del usuario actual
+                    db.collection("resultados")
+                        .get()
+                        .addOnSuccessListener { documents ->
+                            // Crear un mapa para almacenar los datos de cada jugador
+                            val playersData = mutableMapOf<String, Player>()
+
+                            // Iterar sobre cada documento (resultado)
+                            documents.forEach { document ->
+                                val username = document.getString("usuario")!!
+
+                                // Si el jugador aún no está en el mapa, añadirlo
+                                if (!playersData.containsKey(username)) {
+                                    playersData[username] = Player(username, 0, 0, 0, 0)
+                                }
+
+                                // Obtener el objeto Player del mapa
+                                val player = playersData[username]!!
+
+                                // Incrementar PJ
+                                player.PJ++
+
+                                // Incrementar PG o PP dependiendo del resultado
+                                if (document.getString("winlose") == "Victoria") {
+                                    player.PG++
+                                } else if (document.getString("winlose") == "Derrota") {
+                                    player.PP++
+                                }
+
+                                // Calcular Pts
+                                val potentialPts = player.PG * 10 - player.PP * 3
+                                player.Pts = if (potentialPts > 0) potentialPts else 0
+                            }
+
+                            val players = playersData.values.toList().sortedByDescending { it.Pts }
+
+                            // Pasar los datos al RankingAdapter y establecerlo en el RecyclerView
+                            val rankingAdapter = RankingAdapter(players)
+                            recyclerViewRanking.adapter = rankingAdapter
+                        }
+
                 } else if (checkedId == R.id.btnResultados) {
                     recyclerViewRanking.visibility = View.GONE
                     view.findViewById<Button>(R.id.btnSubirResultadoVerResultados).visibility = View.VISIBLE
@@ -149,8 +197,7 @@ class FragmentRanking : Fragment() {
         // Configurar los auto complete text views
         val tenisPadelOptions = arrayOf("Tenis", "Padel")
         val victoriaDerrotaOptions = arrayOf("Victoria", "Derrota")
-        val tenisPadelACTV: AutoCompleteTextView = view.findViewById(R.id.actTenisPadel)
-        val victoriaDerrotaACTV: AutoCompleteTextView = view.findViewById(R.id.actVictoriaDerrota)
+
         tenisPadelACTV.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, tenisPadelOptions))
         victoriaDerrotaACTV.setAdapter(ArrayAdapter(requireContext(), R.layout.list_item, victoriaDerrotaOptions))
 
@@ -170,7 +217,6 @@ class FragmentRanking : Fragment() {
         }
 
         // Configurar el date picker
-        val fechaInput: TextInputEditText = view.findViewById(R.id.inputFecha)
         fechaInput.setOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
@@ -245,52 +291,42 @@ class FragmentRanking : Fragment() {
             val user = FirebaseAuth.getInstance().currentUser
             val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
             val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
-            // Obtener los datos de los campos de entrada
-            val deporte = tenisPadelACTV.text.toString()
-            val fecha = fechaInput.text.toString()
-            val winlose = victoriaDerrotaACTV.text.toString()
-            val usuario = username
-            val set1_1 = view.findViewById<Spinner>(R.id.reSet1_1).selectedItem.toString()
-            val set1_2 = view.findViewById<Spinner>(R.id.reSet1_2).selectedItem.toString()
-            val set2_1 = view.findViewById<Spinner>(R.id.reSet2_1).selectedItem.toString()
-            val set2_2 = view.findViewById<Spinner>(R.id.reSet2_2).selectedItem.toString()
-            val set3_1 = view.findViewById<Spinner>(R.id.reSet3_1).selectedItem.toString()
-            val set3_2 = view.findViewById<Spinner>(R.id.reSet3_2).selectedItem.toString()
-
-
-            // Comprobar que los campos requeridos estén completos
-            if (deporte.isEmpty() || fecha.isEmpty() || winlose.isEmpty() || set1_1 == "-" || set1_2 == "-" || set2_1 == "-" || set2_2 == "-" ) {
-                Toast.makeText(context, "Por favor, completa todos los campos requeridos", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-
-            // Crear un nuevo objeto con los datos
-            val resultado = hashMapOf(
-                "deporte" to deporte,
-                "fecha" to fecha,
-                "winlose" to winlose,
-                "usuario" to usuario,
-                "set1_1" to set1_1,
-                "set1_2" to set1_2,
-                "set2_1" to set2_1,
-                "set2_2" to set2_2,
-                "set3_1" to set3_1,
-                "set3_2" to set3_2
-            )
-
-            // Obtener una referencia a la base de datos de Firebase
+            val userEmail = user?.email
+            val twUser = user?.displayName
             val db = FirebaseFirestore.getInstance()
 
-            // Agregar un nuevo documento a la colección "resultados"
-            db.collection("resultados")
-                .add(resultado)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            // Comprobar si el usuario tiene un nivel
+            if (userEmail != null) {
+                val googleDocRef = db.collection("users").document("(Google) $userEmail")
+                googleDocRef.get().addOnSuccessListener { googleDoc ->
+                    if (googleDoc.exists() && googleDoc.getDouble("nivel") != null) {
+                        guardarResultado(db, username!!)
+                        Toast.makeText(context, "Resultado subido con éxito", Toast.LENGTH_LONG).show()
+                    } else {
+                        val emailDocRef = db.collection("users").document(userEmail)
+                        emailDocRef.get().addOnSuccessListener { emailDoc ->
+                            if (emailDoc.exists() && emailDoc.getDouble("nivel") != null) {
+                                guardarResultado(db, username!!)
+                                Toast.makeText(context, "Resultado subido con éxito", Toast.LENGTH_LONG).show()
+                            } else {
+                                Toast.makeText(context, "Para poder subir un resultado necesitas obtener Nivel Playtronic", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
                 }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
+            } else if (twUser != null) {
+                val twitterDocRef = db.collection("users").document("(Twitter) $twUser")
+                twitterDocRef.get().addOnSuccessListener { twitterDoc ->
+                    if (twitterDoc.exists() && twitterDoc.getDouble("nivel") != null) {
+                        guardarResultado(db, username!!)
+                        Toast.makeText(context, "Resultado subido con éxito", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(context, "Para poder subir un resultado necesitas obtener Nivel Playtronic", Toast.LENGTH_LONG).show()
+                    }
                 }
+            } else {
+                Toast.makeText(context, "Error al actualizar el nivel: Usuario no autenticado", Toast.LENGTH_SHORT).show()
+            }
         }
 
         // Aquí debes obtener la lista de jugadores desde Firestore
@@ -299,6 +335,107 @@ class FragmentRanking : Fragment() {
         rvRanking.adapter = RankingAdapter(players)
 
 
+    }
+
+    @SuppressLint("RestrictedApi")
+    fun guardarResultado(db: FirebaseFirestore, username: String) {
+        // Obtener los datos de los campos de entrada
+        val deporte = tenisPadelACTV.text.toString()
+        val fecha = fechaInput.text.toString()
+        val winlose = victoriaDerrotaACTV.text.toString()
+        val usuario = username
+        val set1_1 = view?.findViewById<Spinner>(R.id.reSet1_1)?.selectedItem.toString()
+        val set1_2 = view?.findViewById<Spinner>(R.id.reSet1_2)?.selectedItem.toString()
+        val set2_1 = view?.findViewById<Spinner>(R.id.reSet2_1)?.selectedItem.toString()
+        val set2_2 = view?.findViewById<Spinner>(R.id.reSet2_2)?.selectedItem.toString()
+        val set3_1 = view?.findViewById<Spinner>(R.id.reSet3_1)?.selectedItem.toString()
+        val set3_2 = view?.findViewById<Spinner>(R.id.reSet3_2)?.selectedItem.toString()
+
+        // Comprobar que los campos requeridos estén completos
+        if (deporte.isEmpty() || fecha.isEmpty() || winlose.isEmpty() || set1_1 == "-" || set1_2 == "-" || set2_1 == "-" || set2_2 == "-" ) {
+            Toast.makeText(context, "Por favor, completa todos los campos requeridos", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Crear un nuevo objeto con los datos
+        val resultado = hashMapOf(
+            "deporte" to deporte,
+            "fecha" to fecha,
+            "winlose" to winlose,
+            "usuario" to usuario,
+            "set1_1" to set1_1,
+            "set1_2" to set1_2,
+            "set2_1" to set2_1,
+            "set2_2" to set2_2,
+            "set3_1" to set3_1,
+            "set3_2" to set3_2
+        )
+
+        // Agregar un nuevo documento a la colección "resultados"
+        db.collection("resultados")
+            .add(resultado)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+
+                // Obtener el correo electrónico del usuario
+                val userEmail = FirebaseAuth.getInstance().currentUser?.email
+                val twUser = FirebaseAuth.getInstance().currentUser?.displayName
+
+                // Comprobar si el correo electrónico del usuario no es nulo
+                if (userEmail != null) {
+                    // Obtener el documento del usuario
+                    val googleDocRef = db.collection("users").document("(Google) $userEmail")
+                    googleDocRef.get().addOnSuccessListener { googleDoc ->
+                        if (googleDoc.exists() && googleDoc.getDouble("nivel") != null) {
+                            updateNivel(db, "(Google) $userEmail", winlose)
+                        } else {
+                            val emailDocRef = db.collection("users").document(userEmail)
+                            emailDocRef.get().addOnSuccessListener { emailDoc ->
+                                if (emailDoc.exists() && emailDoc.getDouble("nivel") != null) {
+                                    updateNivel(db, userEmail, winlose)
+                                }
+                            }
+                        }
+                    }
+                } else if (twUser != null) {
+                    val twitterDocRef = db.collection("users").document("(Twitter) $twUser")
+                    twitterDocRef.get().addOnSuccessListener { twitterDoc ->
+                        if (twitterDoc.exists() && twitterDoc.getDouble("nivel") != null) {
+                            updateNivel(db, "(Twitter) $twUser", winlose)
+                        }
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
+    }
+
+    @SuppressLint("RestrictedApi")
+    fun updateNivel(db: FirebaseFirestore, docId: String, winlose: String) {
+        db.collection("users").document(docId)
+            .get()
+            .addOnSuccessListener { document ->
+                val nivel = document.getDouble("nivel") ?: 0.0
+
+                // Actualizar el nivel dependiendo del resultado
+                var nuevoNivel = if (winlose == "Victoria") nivel + 0.3 else nivel - 0.1
+
+                nuevoNivel = String.format("%.1f", nuevoNivel).toDouble()
+
+                // Actualizar el nivel en la base de datos
+                db.collection("users").document(docId)
+                    .update("nivel", nuevoNivel)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Nivel actualizado con éxito")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error al actualizar el nivel", e)
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error al obtener el documento del usuario", e)
+            }
     }
 
 
