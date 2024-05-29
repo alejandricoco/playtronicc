@@ -13,11 +13,11 @@ class ResultadoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val set3: TextView = itemView.findViewById(R.id.tvSet3Resultado)
 
     fun bind(resultado: Resultado) {
-        deporte.text = resultado.deporte
+        deporte.text = "Partido de " + resultado.deporte
         fecha.text = resultado.fecha
         winlose.text = resultado.winlose
-        set1.text = "${resultado.set1_1}-${resultado.set1_2}"
-        set2.text = "${resultado.set2_1}-${resultado.set2_2}"
-        set3.text = if (resultado.set3_1 == "-" && resultado.set3_2 == "-") "--" else "${resultado.set3_1}-${resultado.set3_2}"
+        set1.text = "${resultado.set1_1}-${resultado.set1_2} /"
+        set2.text = " ${resultado.set2_1}-${resultado.set2_2}"
+        set3.text = if (resultado.set3_1 == "-" && resultado.set3_2 == "-") "" else " / ${resultado.set3_1}-${resultado.set3_2}"
     }
 }

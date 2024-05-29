@@ -52,12 +52,14 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewRanking"
             android:layout_width="411dp"
-            android:layout_height="200dp"
+            android:layout_height="640dp"
             android:background="@color/white"
-            android:backgroundTint="@color/greyClaro"
+            android:backgroundTint="@color/grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="gone"/>
+            app:layout_constraintTop_toBottomOf="@+id/toggleGroupRankingResultados"
+            app:layout_constraintVertical_bias="0"
+            android:visibility="visible"/>
 
     <Button
             android:id="@+id/btnSubirResultadoVerResultados"
@@ -279,11 +281,13 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewResultados"
             android:layout_width="411dp"
-            android:layout_height="200dp"
+            android:layout_height="480dp"
             android:background="@color/white"
-            android:backgroundTint="@color/greyClaro"
+            android:backgroundTint="@color/grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnSubirResultadoVerResultados"
+            app:layout_constraintVertical_bias="0.1"
             android:visibility="gone"/>
 
 

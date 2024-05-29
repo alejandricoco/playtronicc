@@ -2,15 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
               android:orientation="horizontal"
-              android:padding="8dp">
+              android:padding="8dp"
+              android:background="@drawable/borderamarillo">
+
+    <TextView
+            android:id="@+id/tvRanking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="@font/robotoblack"
+            android:textColor="@color/yellow"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="0.01"
+            android:text="1"/>
 
     <TextView
             android:id="@+id/tvUsername"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Usuario"
+            android:text="Leandro Martínez"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
@@ -19,8 +38,9 @@
             android:layout_width="0dp"
             android:textColor="@color/white"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="PJ"
+            android:layout_weight="0.5"
+            android:text="PJ:4"
+            android:layout_marginTop="5dp"
             android:gravity="end"
             android:textSize="16sp" />
 
@@ -29,8 +49,9 @@
             android:layout_width="0dp"
             android:textColor="@color/white"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="PG"
+            android:layout_weight="0.5"
+            android:text="PG:2"
+            android:layout_marginTop="5dp"
             android:gravity="end"
             android:textSize="16sp" />
 
@@ -39,8 +60,9 @@
             android:layout_width="0dp"
             android:textColor="@color/white"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="PP"
+            android:layout_weight="0.5"
+            android:text="PP:2"
+            android:layout_marginTop="5dp"
             android:textSize="16sp"
             android:gravity="end"/>
 
@@ -49,9 +71,11 @@
             android:layout_width="0dp"
             android:textColor="@color/white"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Pts"
+            android:layout_weight="0.6"
+            android:text="Pts:14"
+            android:layout_marginTop="5dp"
             android:textSize="16sp"
-            android:gravity="end"/>
+            android:gravity="end"
+            android:layout_marginRight="5dp"/>
 
 </LinearLayout>

@@ -53,7 +53,7 @@ class FragmentRanking : Fragment() {
 
 
         // Crear un ArrayAdapter con los números del 1 al 7
-        val numbers = arrayOf("-", "1", "2", "3", "4", "5", "6", "7")
+        val numbers = arrayOf("-", "0", "1", "2", "3", "4", "5", "6", "7")
         val adapter = ArrayAdapter(requireContext(), R.layout.spinner_item, numbers)
         // Aplicar el adapter al spinner
         val spinnerIds = arrayOf(R.id.reSet1_1, R.id.reSet1_2, R.id.reSet2_1, R.id.reSet2_2, R.id.reSet3_1, R.id.reSet3_2)
@@ -70,19 +70,73 @@ class FragmentRanking : Fragment() {
 
         // Configurar el toggle group
         val toggleGroup: MaterialButtonToggleGroup = view.findViewById(R.id.toggleGroupRankingResultados)
-        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerViewRanking)
+        val recyclerViewRanking: RecyclerView = view.findViewById(R.id.recyclerViewRanking)
+        recyclerViewRanking.layoutManager = LinearLayoutManager(context)
         toggleGroup.check(R.id.btnRanking)
-        recyclerView.visibility = View.VISIBLE
+        recyclerViewRanking.visibility = View.VISIBLE
+
+
+        // Obtener una referencia a la base de datos de Firebase
+        val db = FirebaseFirestore.getInstance()
+
+        // Obtener el nombre de usuario actual
+        val user = FirebaseAuth.getInstance().currentUser
+        val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+        val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
+
+        // Obtener todos los resultados del usuario actual
+        db.collection("resultados")
+            .get()
+            .addOnSuccessListener { documents ->
+                // Crear un mapa para almacenar los datos de cada jugador
+                val playersData = mutableMapOf<String, Player>()
+
+                // Iterar sobre cada documento (resultado)
+                documents.forEach { document ->
+                    val username = document.getString("usuario")!!
+
+                    // Si el jugador aún no está en el mapa, añadirlo
+                    if (!playersData.containsKey(username)) {
+                        playersData[username] = Player(username, 0, 0, 0, 0)
+                    }
+
+                    // Obtener el objeto Player del mapa
+                    val player = playersData[username]!!
+
+                    // Incrementar PJ
+                    player.PJ++
+
+                    // Incrementar PG o PP dependiendo del resultado
+                    if (document.getString("winlose") == "Victoria") {
+                        player.PG++
+                    } else if (document.getString("winlose") == "Derrota") {
+                        player.PP++
+                    }
+
+                    // Calcular Pts
+                    player.Pts = player.PG * 10 - player.PP * 3
+                }
+
+                val players = playersData.values.toList().sortedByDescending { it.Pts }
+
+                // Pasar los datos al RankingAdapter y establecerlo en el RecyclerView
+                val rankingAdapter = RankingAdapter(players)
+                recyclerViewRanking.adapter = rankingAdapter
+            }
+
+
         toggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked ->
             if (isChecked) { // Solo cambiar la visibilidad cuando un botón se selecciona
                 if (checkedId == R.id.btnRanking) {
-                    recyclerView.visibility = View.VISIBLE
+                    recyclerViewRanking.visibility = View.VISIBLE
+                    view.findViewById<RecyclerView>(R.id.recyclerViewResultados).visibility = View.GONE
                     view.findViewById<Button>(R.id.btnSubirResultadoVerResultados).visibility = View.GONE
                     for (id in otherViews) {
                         view.findViewById<View>(id).visibility = View.GONE
                     }
+
                 } else if (checkedId == R.id.btnResultados) {
-                    recyclerView.visibility = View.GONE
+                    recyclerViewRanking.visibility = View.GONE
                     view.findViewById<Button>(R.id.btnSubirResultadoVerResultados).visibility = View.VISIBLE
                     for (id in otherViews) {
                         view.findViewById<View>(id).visibility = View.VISIBLE
@@ -139,7 +193,7 @@ class FragmentRanking : Fragment() {
                 for (id in otherViews) {
                     view.findViewById<View>(id).visibility = View.GONE
                 }
-                // Mostrar el RecyclerView
+                // Mostrar el RecyclerView de Resultados
                 val recyclerViewResultados: RecyclerView = view.findViewById(R.id.recyclerViewResultados)
                 recyclerViewResultados.layoutManager = LinearLayoutManager(context)
                 recyclerViewResultados.visibility = View.VISIBLE
@@ -166,7 +220,8 @@ class FragmentRanking : Fragment() {
                                 document.getString("usuario")!!,
                                 document.getString("winlose")!!
                             )
-                        }
+                        }.sortedByDescending { it.fecha }
+
                         val adapter = ResultadoAdapter(resultados)
                         recyclerViewResultados.adapter = adapter
                     }
