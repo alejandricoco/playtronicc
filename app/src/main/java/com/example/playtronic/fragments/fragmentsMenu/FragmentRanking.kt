@@ -423,14 +423,20 @@ class FragmentRanking : Fragment() {
 
                 nuevoNivel = String.format("%.1f", nuevoNivel).toDouble()
 
-                // Actualizar el nivel en la base de datos
+                // Obtener la lista de niveles actual
+                val listaNiveles = document.get("listaNiveles") as? ArrayList<Double> ?: arrayListOf()
+
+                // Añadir el nuevo nivel a la lista
+                listaNiveles.add(nuevoNivel)
+
+                // Actualizar el nivel y la lista de niveles en la base de datos
                 db.collection("users").document(docId)
-                    .update("nivel", nuevoNivel)
+                    .update(mapOf("nivel" to nuevoNivel, "listaNiveles" to listaNiveles))
                     .addOnSuccessListener {
-                        Log.d(TAG, "Nivel actualizado con éxito")
+                        Log.d(TAG, "Nivel y lista de niveles actualizados con éxito")
                     }
                     .addOnFailureListener { e ->
-                        Log.w(TAG, "Error al actualizar el nivel", e)
+                        Log.w(TAG, "Error al actualizar el nivel y la lista de niveles", e)
                     }
             }
             .addOnFailureListener { e ->
