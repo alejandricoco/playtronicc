@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<osm-pref>
+    <osmdroid>
+        <debug-mode>false</debug-mode>
+        <force-http>false</force-http>
+    </osmdroid>
+</osm-pref>
