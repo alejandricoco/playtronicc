@@ -38,6 +38,7 @@ class FragmentPerfil : Fragment() {
     }
 
 
+    @SuppressLint("RestrictedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -72,6 +73,41 @@ class FragmentPerfil : Fragment() {
                     profileName.setText(nombreUsuario)
                 }
         }
+
+
+        val profileLevel = view.findViewById<TextView>(R.id.profile_level)
+        val db = FirebaseFirestore.getInstance()
+
+        val userEmail = user?.email
+        val twUser = user?.displayName
+        var docId = ""
+
+        if (userEmail != null) {
+            docId = if (userEmail.contains("@")) "(Google) $userEmail" else userEmail
+        } else if (twUser != null) {
+            docId = "(Twitter) $twUser"
+        }
+
+        db.collection("users").document(docId)
+            .get()
+            .addOnSuccessListener { document ->
+
+                val nivel = document.getDouble("nivel")
+                if (nivel != null) {
+                    profileLevel.text = when {
+                        nivel <= 3.4 -> "$nivel (Casi malo)"
+                        nivel <= 7.0 -> "$nivel (Casi bueno)"
+                        else -> "$nivel (Leyenda)"
+                    }
+                }
+
+
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+
+
 
         val recyclerViewMisPartidos = view.findViewById<RecyclerView>(R.id.recyclerViewMisPartidos)
         recyclerViewMisPartidos.layoutManager = LinearLayoutManager(context)

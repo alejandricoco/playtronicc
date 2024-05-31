@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager.TAG
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -92,6 +93,19 @@ class FragmentInicio : Fragment() {
         comprobarReservasUsuario()
 
         actualizarNivelUsuario()
+
+        // Encuentra el CardView por su ID
+        val cardView4 = view.findViewById<CardView>(R.id.cardView4)
+
+        // Configura el OnClickListener para el CardView
+        cardView4.setOnClickListener {
+            (activity as MenuActivity).cargarFragment(FragmentNivel())
+
+            (activity as MenuActivity).binding.backButton.visibility = View.VISIBLE
+            (activity as MenuActivity).binding.bottomNavigation.visibility = View.GONE
+            (activity as MenuActivity).binding.bottomAppBar.visibility = View.GONE
+
+        }
 
         // A PARTIR DE AQUI SON LAS NOTICIAS
         val newsRecyclerView: RecyclerView = view.findViewById(R.id.newsRecyclerView)
