@@ -1,0 +1,61 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="wrap_content"
+                                   app:cardCornerRadius="16dp"
+                                   app:cardBackgroundColor="@color/greyClaro"
+                                   android:layout_marginTop="10dp"
+                                   android:layout_marginLeft="10dp"
+                                   android:layout_marginRight="10dp">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+        <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="85dp"
+                android:layout_weight="2"
+                app:cardCornerRadius="16dp"
+                android:layout_marginLeft="2.5dp">
+
+            <ImageView
+                    android:id="@+id/campeonatosImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:orientation="vertical">
+
+            <TextView
+                    android:id="@+id/campeonatosTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="2.5dp"
+                    android:layout_marginLeft="5dp"/>
+
+            <TextView
+                    android:id="@+id/campeonatosDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:layout_marginLeft="12.5dp"
+                    android:layout_marginTop="7dp"
+                    android:textColor="@color/white"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

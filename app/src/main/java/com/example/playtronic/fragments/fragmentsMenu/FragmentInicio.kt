@@ -1,6 +1,7 @@
 package com.example.playtronic.fragments.fragmentsMenu
 
 import android.annotation.SuppressLint
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -30,6 +31,8 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import java.util.*
 
 
 class FragmentInicio : Fragment() {
@@ -112,10 +115,14 @@ class FragmentInicio : Fragment() {
         newsRecyclerView.layoutManager = LinearLayoutManager(context)
 
         db.collection("news")
+            .orderBy("date", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
                 val newsList = result.map { document ->
-                    News(document.getString("image")!!, document.getString("title")!!)
+                    val date = document.getTimestamp("date")!!.toDate()
+                    val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
+                    News(document.getString("image")!!, document.getString("title")!!,
+                        formattedDate)
                 }
                 newsRecyclerView.adapter = NewsAdapter(newsList)
             }

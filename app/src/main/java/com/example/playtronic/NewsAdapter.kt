@@ -20,8 +20,7 @@ class NewsAdapter(private val newsList: List<News>) : RecyclerView.Adapter<NewsV
         Glide.with(holder.newsImage.context).load(news.image).into(holder.newsImage)
         holder.newsTitle.text = news.title
 
-        val currentDate: String = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
-        holder.newsDate.text = currentDate
+        holder.newsDate.text = news.date
     }
 
     override fun getItemCount() = newsList.size

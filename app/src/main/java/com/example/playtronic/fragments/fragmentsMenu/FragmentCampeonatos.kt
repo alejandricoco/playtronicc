@@ -1,14 +1,25 @@
 package com.example.playtronic.fragments.fragmentsMenu
 
+import android.annotation.SuppressLint
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.playtronic.R
+import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.playtronic.*
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import java.util.*
 
 
 class FragmentCampeonatos : Fragment() {
+
+    private val db = FirebaseFirestore.getInstance()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -17,10 +28,29 @@ class FragmentCampeonatos : Fragment() {
         return inflater.inflate(R.layout.fragment_campeonatos, container, false)
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // A PARTIR DE AQUI SON LOS EVENTOS
+        val campeonatosRecyclerView: RecyclerView = view.findViewById(R.id.campeonatosRecyclerView)
+        campeonatosRecyclerView.layoutManager = LinearLayoutManager(context)
 
+        db.collection("campeonatos")
+            .orderBy("date", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                val campeonatosList = result.map { document ->
+                    val date = document.getTimestamp("date")!!.toDate()
+                    val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
+                    Campeonatos(document.getString("image")!!, document.getString("title")!!,
+                        formattedDate)
+                }
+                campeonatosRecyclerView.adapter = CampeonatosAdapter(campeonatosList)
+            }
+            .addOnFailureListener { exception ->
+                Log.w(FragmentManager.TAG, "Error obteniendo los campeonatos.", exception)
+            }
 
     }
 

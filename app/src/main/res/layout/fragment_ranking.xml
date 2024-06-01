@@ -280,8 +280,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewResultados"
-            android:layout_width="411dp"
-            android:layout_height="480dp"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_height="580dp"
             android:background="@color/white"
             android:backgroundTint="@color/grey"
             app:layout_constraintBottom_toBottomOf="parent"
