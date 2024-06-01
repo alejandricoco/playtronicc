@@ -121,8 +121,9 @@ class FragmentInicio : Fragment() {
                 val newsList = result.map { document ->
                     val date = document.getTimestamp("date")!!.toDate()
                     val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
+                    val cuerpo = document.getString("cuerpo")?: ""
                     News(document.getString("image")!!, document.getString("title")!!,
-                        formattedDate)
+                        formattedDate, cuerpo)
                 }
                 newsRecyclerView.adapter = NewsAdapter(newsList)
             }

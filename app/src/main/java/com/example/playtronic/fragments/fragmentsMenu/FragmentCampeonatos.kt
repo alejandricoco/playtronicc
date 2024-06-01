@@ -43,8 +43,9 @@ class FragmentCampeonatos : Fragment() {
                 val campeonatosList = result.map { document ->
                     val date = document.getTimestamp("date")!!.toDate()
                     val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
+                    val cuerpo = document.getString("cuerpo")?: ""
                     Campeonatos(document.getString("image")!!, document.getString("title")!!,
-                        formattedDate)
+                        formattedDate, cuerpo)
                 }
                 campeonatosRecyclerView.adapter = CampeonatosAdapter(campeonatosList)
             }

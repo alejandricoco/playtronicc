@@ -47,7 +47,9 @@ class FragmentEventos : Fragment() {
                 val eventosList = result.map { document ->
                     val date = document.getTimestamp("date")!!.toDate()
                     val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date)
-                    Eventos(document.getString("image")!!, document.getString("title")!!, formattedDate)
+                    val cuerpo = document.getString("cuerpo")?: ""
+                    Eventos(document.getString("image")!!, document.getString("title")!!, formattedDate,
+                        cuerpo)
                 }
                 eventosRecyclerView.adapter = EventosAdapter(eventosList)
             }
