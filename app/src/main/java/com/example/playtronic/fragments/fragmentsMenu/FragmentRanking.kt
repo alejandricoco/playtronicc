@@ -3,6 +3,7 @@ package com.example.playtronic.fragments.fragmentsMenu
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.InputType
@@ -21,8 +22,12 @@ import com.example.playtronic.Resultado
 import com.example.playtronic.ResultadoAdapter
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class FragmentRanking : Fragment() {
@@ -266,7 +271,10 @@ class FragmentRanking : Fragment() {
                                 document.getString("usuario")!!,
                                 document.getString("winlose")!!
                             )
-                        }.sortedByDescending { it.fecha }
+                        }.sortedByDescending {
+                            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                            sdf.parse(it.fecha)
+                        }
 
                         val adapter = ResultadoAdapter(resultados)
                         recyclerViewResultados.adapter = adapter
@@ -341,7 +349,8 @@ class FragmentRanking : Fragment() {
     fun guardarResultado(db: FirebaseFirestore, username: String) {
         // Obtener los datos de los campos de entrada
         val deporte = tenisPadelACTV.text.toString()
-        val fecha = fechaInput.text.toString()
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val fecha = sdf.parse(fechaInput.text.toString())
         val winlose = victoriaDerrotaACTV.text.toString()
         val usuario = username
         val set1_1 = view?.findViewById<Spinner>(R.id.reSet1_1)?.selectedItem.toString()
@@ -352,7 +361,7 @@ class FragmentRanking : Fragment() {
         val set3_2 = view?.findViewById<Spinner>(R.id.reSet3_2)?.selectedItem.toString()
 
         // Comprobar que los campos requeridos estén completos
-        if (deporte.isEmpty() || fecha.isEmpty() || winlose.isEmpty() || set1_1 == "-" || set1_2 == "-" || set2_1 == "-" || set2_2 == "-" ) {
+        if (deporte.isEmpty() || fecha == null || winlose.isEmpty() || set1_1 == "-" || set1_2 == "-" || set2_1 == "-" || set2_2 == "-" ) {
             Toast.makeText(context, "Por favor, completa todos los campos requeridos", Toast.LENGTH_SHORT).show()
             return
         }
@@ -360,7 +369,7 @@ class FragmentRanking : Fragment() {
         // Crear un nuevo objeto con los datos
         val resultado = hashMapOf(
             "deporte" to deporte,
-            "fecha" to fecha,
+            "fecha" to Timestamp(fecha),
             "winlose" to winlose,
             "usuario" to usuario,
             "set1_1" to set1_1,
@@ -431,7 +440,7 @@ class FragmentRanking : Fragment() {
 
                 // Actualizar el nivel y la lista de niveles en la base de datos
                 db.collection("users").document(docId)
-                    .update(mapOf("nivel" to nuevoNivel, "listaNiveles" to listaNiveles))
+                    .set(mapOf("nivel" to nuevoNivel, "listaNiveles" to listaNiveles), SetOptions.merge())
                     .addOnSuccessListener {
                         Log.d(TAG, "Nivel y lista de niveles actualizados con éxito")
                     }

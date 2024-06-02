@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.playtronic.databinding.ActivityMenuBinding
 import com.example.playtronic.databinding.FragmentJugarBinding
+import com.example.playtronic.fragments.fragmentsMain.FragmentLogin
 import com.example.playtronic.fragments.fragmentsMenu.*
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -162,16 +163,37 @@ class MenuActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onBackPressed() {
-
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-
-        }else{
-
-            super.onBackPressed()
+        } else{
+            val fragmentManager = supportFragmentManager
+            if (fragmentManager.backStackEntryCount > 0) {
+                binding.bottomNavigation.visibility = View.VISIBLE
+                binding.bottomNavigation.selectedItemId = R.id.bottom_home
+                binding.bottomAppBar.visibility = View.VISIBLE
+                // Si hay fragmentos en la pila de retroceso, navega al fragmento anterior
+                fragmentManager.popBackStack()
+            } else {
+                // Navega al fragmento específico (FragmentLogin en este caso)
+                val transaction = fragmentManager.beginTransaction()
+                transaction.replace(R.id.fragment_container, FragmentInicio()) // FragmentLogin es el fragmento al que quieres ir
+                binding.bottomNavigation.visibility = View.VISIBLE
+                binding.bottomNavigation.selectedItemId = R.id.bottom_home
+                binding.bottomAppBar.visibility = View.VISIBLE
+                transaction.addToBackStack(null)
+                transaction.commit()
+                return // Termina la ejecución del método aquí
+            }
         }
 
+        // Llama a super.onBackPressed() si ninguna de las condiciones anteriores se cumple
+        binding.bottomNavigation.visibility = View.VISIBLE
+        binding.bottomNavigation.selectedItemId = R.id.bottom_home
+        binding.bottomAppBar.visibility = View.VISIBLE
+        if (  2 < 1  ) {super.onBackPressed()}
     }
+
+
 
     fun cargarFragment(fragment: Fragment) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
