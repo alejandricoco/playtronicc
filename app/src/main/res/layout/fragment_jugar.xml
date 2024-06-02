@@ -21,6 +21,17 @@
             app:layout_constraintVertical_bias="0.09">
     </TextView>
 
+    <ProgressBar
+            android:id="@+id/progressBarGeneral"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:indeterminate="true"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="370dp"
@@ -36,7 +47,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_bias="0.3" android:id="@+id/cardView"
-            android:visibility="visible">
+            android:visibility="gone">
 
 
         <androidx.viewpager2.widget.ViewPager2
@@ -62,7 +73,7 @@
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_bias="0.78"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
 
     <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
@@ -76,7 +87,7 @@
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_bias="0.61"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
 
 
     <com.google.android.material.button.MaterialButtonToggleGroup

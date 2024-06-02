@@ -93,12 +93,14 @@ class FragmentPerfil : Fragment() {
             .addOnSuccessListener { document ->
 
                 val nivel = document.getDouble("nivel")
-                if (nivel != null) {
-                    profileLevel.text = when {
+                profileLevel.text = if (nivel != null) {
+                    when {
                         nivel <= 3.4 -> "$nivel (Casi malo)"
                         nivel <= 7.0 -> "$nivel (Casi bueno)"
                         else -> "$nivel (Leyenda)"
                     }
+                } else {
+                    "Sin nivel"
                 }
 
 

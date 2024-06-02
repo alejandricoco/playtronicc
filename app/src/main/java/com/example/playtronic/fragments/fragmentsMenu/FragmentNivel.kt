@@ -84,12 +84,14 @@ class FragmentNivel : Fragment() {
                 profileName.text = username
 
                 val nivel = document.getDouble("nivel")
-                if (nivel != null) {
-                    profileLevel.text = when {
+                profileLevel.text = if (nivel != null) {
+                    when {
                         nivel <= 3.4 -> "$nivel (Casi malo)"
                         nivel <= 7.0 -> "$nivel (Casi bueno)"
                         else -> "$nivel (Leyenda)"
                     }
+                } else {
+                    "Nivel no disponible"
                 }
 
                 db.collection("resultados")

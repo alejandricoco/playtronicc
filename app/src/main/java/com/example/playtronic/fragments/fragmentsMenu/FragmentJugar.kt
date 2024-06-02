@@ -2,6 +2,8 @@ package com.example.playtronic.fragments.fragmentsMenu
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.InputType
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -37,9 +39,15 @@ class FragmentJugar : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val progressBarGeneral = view.findViewById<ProgressBar>(R.id.progressBarGeneral)
+        Handler(Looper.getMainLooper()).postDelayed({
+
         viewPager = view.findViewById(R.id.viewPager)
-        val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
+
+            val cardView = view.findViewById<CardView>(R.id.cardView)
+            val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
         submitButton = view.findViewById(R.id.submit_button)
+
 
 
         val user = FirebaseAuth.getInstance().currentUser
@@ -50,35 +58,36 @@ class FragmentJugar : Fragment() {
         if (userEmail != null) {
             val googleDocRef = db.collection("users").document("(Google) $userEmail")
             googleDocRef.get().addOnSuccessListener { googleDoc ->
-                if (googleDoc.exists() && googleDoc.getDouble("nivel") != null) {
-
+                if (googleDoc.getDouble("nivel") != null) {
                     // No es necesario mostrar el formulario pq el usuario ya ha calculado su nivel...
-                    view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                    cardView.visibility = View.GONE
                     submitButton.visibility = View.GONE
                     tabLayout.visibility = View.GONE
 
                     // aqui va la funcion frgNivelExitoso
                     frgNivelExitoso()
-
-
-
-
                 } else {
                     val emailDocRef = db.collection("users").document(userEmail)
                     emailDocRef.get().addOnSuccessListener { emailDoc ->
-                        if (emailDoc.exists() && emailDoc.getDouble("nivel") != null) {
-
+                        if (emailDoc.getDouble("nivel") != null) {
                             // No es necesario mostrar el formulario pq el usuario ya ha calculado su nivel...
-                            view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                            cardView.visibility = View.GONE
                             submitButton.visibility = View.GONE
                             tabLayout.visibility = View.GONE
 
                             // aqui va la funcion frgNivelExitoso
                             frgNivelExitoso()
-
-
-
+                        } else {
+                            // El nivel es null, por lo que mostramos formulario
+                            cardView.visibility = View.VISIBLE
+                            submitButton.visibility = View.VISIBLE
+                            tabLayout.visibility = View.VISIBLE
                         }
+                    }.addOnFailureListener {
+                        // El documento no existe y mostramos el formulario
+                        cardView.visibility = View.VISIBLE
+                        submitButton.visibility = View.VISIBLE
+                        tabLayout.visibility = View.VISIBLE
                     }
                 }
             }
@@ -90,7 +99,7 @@ class FragmentJugar : Fragment() {
                     if (nivel != null) {
 
                         // No es necesario mostrar el formulario pq el usuario ya ha calculado su nivel...
-                        view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                        cardView.visibility = View.GONE
                         submitButton.visibility = View.GONE
                         tabLayout.visibility = View.GONE
 
@@ -102,13 +111,13 @@ class FragmentJugar : Fragment() {
 
                     } else {
                         // El nivel es null, por lo que mostramos formulario
-                        view.findViewById<CardView>(R.id.cardView).visibility = View.VISIBLE
+                        cardView.visibility = View.VISIBLE
                         submitButton.visibility = View.VISIBLE
                         tabLayout.visibility = View.VISIBLE
                     }
                 } else {
                     // El documento no existe y mostramos el formulario
-                    view.findViewById<CardView>(R.id.cardView).visibility = View.VISIBLE
+                    cardView.visibility = View.VISIBLE
                     submitButton.visibility = View.VISIBLE
                     tabLayout.visibility = View.VISIBLE
                 }
@@ -205,7 +214,7 @@ class FragmentJugar : Fragment() {
                         if (googleDoc.exists()) {
                             googleDocRef.update("nivel", level).addOnSuccessListener {
                                 // El cardview y el botón desaparecen
-                                view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                                cardView.visibility = View.GONE
                                 submitButton.visibility = View.GONE
                                 tabLayout.visibility = View.GONE
                                 cargarFragment(FragmentNivelSuccess())
@@ -216,7 +225,7 @@ class FragmentJugar : Fragment() {
                                 if (emailDoc.exists()) {
                                     emailDocRef.update("nivel", level).addOnSuccessListener {
                                         // El cardview y el botón desaparecen
-                                        view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                                        cardView.visibility = View.GONE
                                         submitButton.visibility = View.GONE
                                         tabLayout.visibility = View.GONE
                                         cargarFragment(FragmentNivelSuccess())
@@ -228,7 +237,7 @@ class FragmentJugar : Fragment() {
                                             if (twitterDoc.exists()) {
                                                 twitterDocRef.update("nivel", level).addOnSuccessListener {
                                                     // Haz que el CardView y el botón desaparezcan
-                                                    view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                                                    cardView.visibility = View.GONE
                                                     submitButton.visibility = View.GONE
                                                     tabLayout.visibility = View.GONE
                                                     cargarFragment(FragmentNivelSuccess())
@@ -251,7 +260,7 @@ class FragmentJugar : Fragment() {
                             if (twitterDoc.exists()) {
                                 twitterDocRef.update("nivel", level).addOnSuccessListener {
                                     // Haz que el CardView y el botón desaparezcan
-                                    view.findViewById<CardView>(R.id.cardView).visibility = View.GONE
+                                    cardView.visibility = View.GONE
                                     submitButton.visibility = View.GONE
                                     tabLayout.visibility = View.GONE
                                     cargarFragment(FragmentNivelSuccess())
@@ -270,6 +279,10 @@ class FragmentJugar : Fragment() {
         }
 
 
+            progressBarGeneral.visibility = View.GONE
+            // Mostrar las vistas principales después de ocultar la ProgressBar
+
+        }, 500)
 
     }
 
@@ -290,122 +303,96 @@ class FragmentJugar : Fragment() {
 
 
     private fun frgNivelExitoso() {
-        // Hacer visible el toggle y el RecyclerView
-        val toggleGroupCrearUnirmeA = view?.findViewById<MaterialButtonToggleGroup>(R.id.toggleGroupCrearUnirmeA)
-        val tvUnPartidoDe = view?.findViewById<TextView>(R.id.tvUnPartidoDe)
-        val toggleGroupDeporte = view?.findViewById<MaterialButtonToggleGroup>(R.id.toggleGroupDeporte)
+        if (isAdded) {
 
-        toggleGroupCrearUnirmeA?.clearChecked()
-        toggleGroupDeporte?.clearChecked()
+            // Hacer visible el toggle y el RecyclerView
+            val toggleGroupCrearUnirmeA = view?.findViewById<MaterialButtonToggleGroup>(R.id.toggleGroupCrearUnirmeA)
+            val tvUnPartidoDe = view?.findViewById<TextView>(R.id.tvUnPartidoDe)
+            val toggleGroupDeporte = view?.findViewById<MaterialButtonToggleGroup>(R.id.toggleGroupDeporte)
 
-        // VARIABLES CUANDO LA OPCION ES UNIRSE A UN PARTIDO
-        val recyclerViewPartidos = view?.findViewById<RecyclerView>(R.id.recyclerViewPartidos)
-        recyclerViewPartidos?.layoutManager = LinearLayoutManager(context)
-
-        // VARIABLES CUANDO LA OPCION ES CREAR UN PARTIDO
-        val tilHorarioPreferido = view?.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilHorarioPreferido)
-        val actHorarioPreferido = view?.findViewById<AutoCompleteTextView>(R.id.actHorarioPreferido)
-        val tilNivelOponente = view?.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilNivelOponente)
-        val actNivelOponente = view?.findViewById<AutoCompleteTextView>(R.id.actNivelOponente)
-
-        val itemsNivelesOponente = listOf("Casi malo (1 - 3.4)", "Casi bueno (3.5 - 7.0)", "Leyenda (7.1 - 10.0)", "No me importa el nivel")
-        val adapterNivelesOponente = ArrayAdapter(requireContext(), R.layout.list_item, itemsNivelesOponente)
-        (actNivelOponente as? AutoCompleteTextView)?.setAdapter(adapterNivelesOponente)
-
-        val itemsHorarioPreferido = listOf("Mañana", "Tarde", "Mañana o tarde")
-        val adapterHorarioPreferido = ArrayAdapter(requireContext(), R.layout.list_item, itemsHorarioPreferido)
-        (actHorarioPreferido as? AutoCompleteTextView)?.setAdapter(adapterHorarioPreferido)
-
-        actHorarioPreferido?.setInputType(InputType.TYPE_NULL)
-        actNivelOponente?.setInputType(InputType.TYPE_NULL)
-
-        actHorarioPreferido?.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-            if (hasFocus) {
-                (v as? AutoCompleteTextView)?.showDropDown()
-            }
-        }
-
-        actNivelOponente?.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-            if (hasFocus) {
-                (v as? AutoCompleteTextView)?.showDropDown()
-            }
-        }
-
-        val btnCrearPartido = view?.findViewById<Button>(R.id.btnCrearPartido)
-
-        // Set visibility
-        toggleGroupCrearUnirmeA?.visibility = View.VISIBLE
-        tvUnPartidoDe?.visibility = View.VISIBLE
-        toggleGroupDeporte?.visibility = View.VISIBLE
-        recyclerViewPartidos?.visibility = View.GONE
-        tilHorarioPreferido?.visibility = View.GONE
-        actHorarioPreferido?.visibility = View.GONE
-        tilNivelOponente?.visibility = View.GONE
-        actNivelOponente?.visibility = View.GONE
-        btnCrearPartido?.visibility = View.GONE
-
-        // Añadimos los listeners a los botones
-        view?.findViewById<Button>(R.id.btnCrear)?.setOnClickListener {
-            // Show the fields for creating a game
-            tilHorarioPreferido?.visibility = View.VISIBLE
-            actHorarioPreferido?.visibility = View.VISIBLE
-            tilNivelOponente?.visibility = View.VISIBLE
-            actNivelOponente?.visibility = View.VISIBLE
-            btnCrearPartido?.visibility = View.VISIBLE
+            toggleGroupCrearUnirmeA?.clearChecked()
             toggleGroupDeporte?.clearChecked()
 
-            // Hide the RecyclerView
+            // VARIABLES CUANDO LA OPCION ES UNIRSE A UN PARTIDO
+            val recyclerViewPartidos = view?.findViewById<RecyclerView>(R.id.recyclerViewPartidos)
+            recyclerViewPartidos?.layoutManager = LinearLayoutManager(context)
+
+            // VARIABLES CUANDO LA OPCION ES CREAR UN PARTIDO
+            val tilHorarioPreferido =
+                view?.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilHorarioPreferido)
+            val actHorarioPreferido = view?.findViewById<AutoCompleteTextView>(R.id.actHorarioPreferido)
+            val tilNivelOponente =
+                view?.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilNivelOponente)
+            val actNivelOponente = view?.findViewById<AutoCompleteTextView>(R.id.actNivelOponente)
+
+            val itemsNivelesOponente = listOf(
+                "Casi malo (1 - 3.4)",
+                "Casi bueno (3.5 - 7.0)",
+                "Leyenda (7.1 - 10.0)",
+                "No me importa el nivel"
+            )
+            val adapterNivelesOponente = ArrayAdapter(requireContext(), R.layout.list_item, itemsNivelesOponente)
+            (actNivelOponente as? AutoCompleteTextView)?.setAdapter(adapterNivelesOponente)
+
+            val itemsHorarioPreferido = listOf("Mañana", "Tarde", "Mañana o tarde")
+            val adapterHorarioPreferido = ArrayAdapter(requireContext(), R.layout.list_item, itemsHorarioPreferido)
+            (actHorarioPreferido as? AutoCompleteTextView)?.setAdapter(adapterHorarioPreferido)
+
+            actHorarioPreferido?.setInputType(InputType.TYPE_NULL)
+            actNivelOponente?.setInputType(InputType.TYPE_NULL)
+
+            actHorarioPreferido?.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                if (hasFocus) {
+                    (v as? AutoCompleteTextView)?.showDropDown()
+                }
+            }
+
+            actNivelOponente?.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                if (hasFocus) {
+                    (v as? AutoCompleteTextView)?.showDropDown()
+                }
+            }
+
+            val btnCrearPartido = view?.findViewById<Button>(R.id.btnCrearPartido)
+
+            // Set visibility
+            toggleGroupCrearUnirmeA?.visibility = View.VISIBLE
+            tvUnPartidoDe?.visibility = View.VISIBLE
+            toggleGroupDeporte?.visibility = View.VISIBLE
             recyclerViewPartidos?.visibility = View.GONE
-        }
-
-        view?.findViewById<Button>(R.id.btnUnirmeA)?.setOnClickListener {
-            // Show the RecyclerView
-            recyclerViewPartidos?.visibility = View.VISIBLE
-
-            // Hide the fields for creating a game
             tilHorarioPreferido?.visibility = View.GONE
             actHorarioPreferido?.visibility = View.GONE
             tilNivelOponente?.visibility = View.GONE
             actNivelOponente?.visibility = View.GONE
             btnCrearPartido?.visibility = View.GONE
-            toggleGroupDeporte?.clearChecked()
 
-            // AQUI MOSTRAMOS LOS PARTIDOS DISPONIBLES DESDE FIREBASE
-            val db = FirebaseFirestore.getInstance()
-            db.collection("partidos").get().addOnSuccessListener { result ->
-                val partidos = result.map { document ->
-                    Partido(
-                        id = document.id,
-                        creadoPor = document.getString("creadoPor") ?: "",
-                        deporte = document.getString("deporte") ?: "",
-                        horarioPreferido = document.getString("horarioPreferido") ?: "",
-                        nivelOponente = document.getString("nivelOponente") ?: ""
-                    )
-                }.filter { partido ->
-                    // Filtra los partidos creados por el usuario actual
-                    val user = FirebaseAuth.getInstance().currentUser
-                    val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
-                    //Si el usuario firebase es nulo, se obtiene el nombre de usuario guardado en SharedPreferences
-                    val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
-                    partido.creadoPor != username
-                }
+            // Añadimos los listeners a los botones
+            view?.findViewById<Button>(R.id.btnCrear)?.setOnClickListener {
+                // Show the fields for creating a game
+                tilHorarioPreferido?.visibility = View.VISIBLE
+                actHorarioPreferido?.visibility = View.VISIBLE
+                tilNivelOponente?.visibility = View.VISIBLE
+                actNivelOponente?.visibility = View.VISIBLE
+                btnCrearPartido?.visibility = View.VISIBLE
+                toggleGroupDeporte?.clearChecked()
 
-                // Configura el RecyclerView
-                recyclerViewPartidos?.adapter = PartidoAdapter(partidos)
+                // Hide the RecyclerView
+                recyclerViewPartidos?.visibility = View.GONE
             }
-        }
 
-        //AQUI FILTRAMOS POR PADEL O TENIS LOS PARTIDOS DEL RECYCLERVIEW
+            view?.findViewById<Button>(R.id.btnUnirmeA)?.setOnClickListener {
+                // Show the RecyclerView
+                recyclerViewPartidos?.visibility = View.VISIBLE
 
-        toggleGroupDeporte?.addOnButtonCheckedListener { group, checkedId, isChecked ->
-            if (isChecked) {
-                val selectedSport = when (checkedId) {
-                    R.id.btnTenis -> "Tenis"
-                    R.id.btnPadel -> "Padel"
-                    else -> ""
-                }
+                // Hide the fields for creating a game
+                tilHorarioPreferido?.visibility = View.GONE
+                actHorarioPreferido?.visibility = View.GONE
+                tilNivelOponente?.visibility = View.GONE
+                actNivelOponente?.visibility = View.GONE
+                btnCrearPartido?.visibility = View.GONE
+                toggleGroupDeporte?.clearChecked()
 
-                // AQUI MOSTRAMOS LOS PARTIDOS DISPONIBLES DESDE FIREBASE FILTRADOS POR DEPORTE
+                // AQUI MOSTRAMOS LOS PARTIDOS DISPONIBLES DESDE FIREBASE
                 val db = FirebaseFirestore.getInstance()
                 db.collection("partidos").get().addOnSuccessListener { result ->
                     val partidos = result.map { document ->
@@ -419,96 +406,141 @@ class FragmentJugar : Fragment() {
                     }.filter { partido ->
                         // Filtra los partidos creados por el usuario actual
                         val user = FirebaseAuth.getInstance().currentUser
-                        val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+                        val sharedPreferences =
+                            requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
                         //Si el usuario firebase es nulo, se obtiene el nombre de usuario guardado en SharedPreferences
                         val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
-                        partido.creadoPor != username && partido.deporte == selectedSport
+                        partido.creadoPor != username
                     }
 
                     // Configura el RecyclerView
                     recyclerViewPartidos?.adapter = PartidoAdapter(partidos)
                 }
             }
-        }
 
-        // Add listener to the create game button
-        btnCrearPartido?.setOnClickListener {
-            // Validate the input fields
-            if (actHorarioPreferido?.text?.isNotEmpty() == true &&
-                actNivelOponente?.text?.isNotEmpty() == true) {
+            //AQUI FILTRAMOS POR PADEL O TENIS LOS PARTIDOS DEL RECYCLERVIEW
 
-                //Obtenemos el usuario actual
-                val user = FirebaseAuth.getInstance().currentUser
-                val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
-                //Si el usuario firebase es nulo, se obtiene el nombre de usuario guardado en SharedPreferences
-                val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
-                val userId = user?.uid
-
-
-                // Get the selected sport
-                val selectedSportId = toggleGroupDeporte?.checkedButtonId ?: -1
-                val selectedSport = when (selectedSportId) {
-                    R.id.btnTenis -> "Tenis"
-                    R.id.btnPadel -> "Padel"
-                    else -> ""
-                }
-
-                // Get the opponent level
-                val nivelOponente = when (actNivelOponente?.text.toString()) {
-                    "Casi malo (1 - 3.4)" -> "Casi malo (1 - 3.4)"
-                    "Casi bueno (3.5 - 7.0)" -> "Casi bueno (3.5 - 7.0)"
-                    "Leyenda (7.1 - 10.0)" -> "Leyenda (7.1 - 10.0)"
-                    "No me importa el nivel" -> "Cualquier nivel"
-                    else -> ""
-                }
-
-                val horarioPreferido = when (actHorarioPreferido?.text.toString()) {
-                    "Mañana" -> "Mañana"
-                    "Tarde" -> "Tarde"
-                    "Mañana o tarde" -> "Mañana o tarde"
-                    else -> ""
-                }
-
-                if (selectedSport.isEmpty()) {
-                    Toast.makeText(context, "Por favor, selecciona un deporte", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-
-                // Create a new game
-                val nuevoPartido = hashMapOf(
-                    "creadoPor" to username,
-                    "deporte" to selectedSport,
-                    "horarioPreferido" to horarioPreferido,
-                    "nivelOponente" to nivelOponente,
-                    "contador" to 0,
-                    "usuariosUnidos" to mutableListOf(username)
-                )
-
-                // Save the new game to Firebase
-                val db = FirebaseFirestore.getInstance()
-                db.collection("partidos")
-                    .add(nuevoPartido)
-                    .addOnSuccessListener {
-                        Toast.makeText(context, "Partido creado con éxito", Toast.LENGTH_SHORT).show()
-                        val id = it.id
-                        //AQUI TENEMOS EL ID DEL PARTIDO CREADO NUEVO
-
-                        //AQUI SE DEBE AÑADIR EL USUARIO AL ARRAY DE USUARIOS UNIDOS
-                        db.collection("partidos").document(id)
-                            .update("usuariosUnidos", FieldValue.arrayUnion(username))
-                            .addOnSuccessListener {
-                                Toast.makeText(context, "Usuario añadido al partido", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(context, "Error al añadir el usuario al partido: ${e.message}", Toast.LENGTH_SHORT).show()
-                            }
-
+            toggleGroupDeporte?.addOnButtonCheckedListener { group, checkedId, isChecked ->
+                if (isChecked) {
+                    val selectedSport = when (checkedId) {
+                        R.id.btnTenis -> "Tenis"
+                        R.id.btnPadel -> "Padel"
+                        else -> ""
                     }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(context, "Error al crear el partido: ${e.message}", Toast.LENGTH_SHORT).show()
+
+                    // AQUI MOSTRAMOS LOS PARTIDOS DISPONIBLES DESDE FIREBASE FILTRADOS POR DEPORTE
+                    val db = FirebaseFirestore.getInstance()
+                    db.collection("partidos").get().addOnSuccessListener { result ->
+                        val partidos = result.map { document ->
+                            Partido(
+                                id = document.id,
+                                creadoPor = document.getString("creadoPor") ?: "",
+                                deporte = document.getString("deporte") ?: "",
+                                horarioPreferido = document.getString("horarioPreferido") ?: "",
+                                nivelOponente = document.getString("nivelOponente") ?: ""
+                            )
+                        }.filter { partido ->
+                            // Filtra los partidos creados por el usuario actual
+                            val user = FirebaseAuth.getInstance().currentUser
+                            val sharedPreferences =
+                                requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+                            //Si el usuario firebase es nulo, se obtiene el nombre de usuario guardado en SharedPreferences
+                            val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
+                            partido.creadoPor != username && partido.deporte == selectedSport
+                        }
+
+                        // Configura el RecyclerView
+                        recyclerViewPartidos?.adapter = PartidoAdapter(partidos)
                     }
-            } else {
-                Toast.makeText(context, "Por favor, rellene todos los campos", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            // Add listener to the create game button
+            btnCrearPartido?.setOnClickListener {
+                // Validate the input fields
+                if (actHorarioPreferido?.text?.isNotEmpty() == true &&
+                    actNivelOponente?.text?.isNotEmpty() == true
+                ) {
+
+                    //Obtenemos el usuario actual
+                    val user = FirebaseAuth.getInstance().currentUser
+                    val sharedPreferences =
+                        requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+                    //Si el usuario firebase es nulo, se obtiene el nombre de usuario guardado en SharedPreferences
+                    val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
+                    val userId = user?.uid
+
+
+                    // Get the selected sport
+                    val selectedSportId = toggleGroupDeporte?.checkedButtonId ?: -1
+                    val selectedSport = when (selectedSportId) {
+                        R.id.btnTenis -> "Tenis"
+                        R.id.btnPadel -> "Padel"
+                        else -> ""
+                    }
+
+                    // Get the opponent level
+                    val nivelOponente = when (actNivelOponente?.text.toString()) {
+                        "Casi malo (1 - 3.4)" -> "Casi malo (1 - 3.4)"
+                        "Casi bueno (3.5 - 7.0)" -> "Casi bueno (3.5 - 7.0)"
+                        "Leyenda (7.1 - 10.0)" -> "Leyenda (7.1 - 10.0)"
+                        "No me importa el nivel" -> "Cualquier nivel"
+                        else -> ""
+                    }
+
+                    val horarioPreferido = when (actHorarioPreferido?.text.toString()) {
+                        "Mañana" -> "Mañana"
+                        "Tarde" -> "Tarde"
+                        "Mañana o tarde" -> "Mañana o tarde"
+                        else -> ""
+                    }
+
+                    if (selectedSport.isEmpty()) {
+                        Toast.makeText(context, "Por favor, selecciona un deporte", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+
+                    // Create a new game
+                    val nuevoPartido = hashMapOf(
+                        "creadoPor" to username,
+                        "deporte" to selectedSport,
+                        "horarioPreferido" to horarioPreferido,
+                        "nivelOponente" to nivelOponente,
+                        "contador" to 0,
+                        "usuariosUnidos" to mutableListOf(username)
+                    )
+
+                    // Save the new game to Firebase
+                    val db = FirebaseFirestore.getInstance()
+                    db.collection("partidos")
+                        .add(nuevoPartido)
+                        .addOnSuccessListener {
+                            Toast.makeText(context, "Partido creado con éxito", Toast.LENGTH_SHORT).show()
+                            val id = it.id
+                            //AQUI TENEMOS EL ID DEL PARTIDO CREADO NUEVO
+
+                            //AQUI SE DEBE AÑADIR EL USUARIO AL ARRAY DE USUARIOS UNIDOS
+                            db.collection("partidos").document(id)
+                                .update("usuariosUnidos", FieldValue.arrayUnion(username))
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "Usuario añadido al partido", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(
+                                        context,
+                                        "Error al añadir el usuario al partido: ${e.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(context, "Error al crear el partido: ${e.message}", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                } else {
+                    Toast.makeText(context, "Por favor, rellene todos los campos", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

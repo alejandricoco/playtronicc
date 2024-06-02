@@ -259,9 +259,12 @@ class FragmentRanking : Fragment() {
                     .get()
                     .addOnSuccessListener { documents ->
                         val resultados = documents.map { document ->
+                            val fechaTimestamp = document.getTimestamp("fecha")
+                            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                            val fechaString = sdf.format(fechaTimestamp?.toDate())
                             Resultado(
                                 document.getString("deporte")!!,
-                                document.getString("fecha")!!,
+                                fechaString,
                                 document.getString("set1_1")!!,
                                 document.getString("set1_2")!!,
                                 document.getString("set2_1")!!,
@@ -430,7 +433,8 @@ class FragmentRanking : Fragment() {
                 // Actualizar el nivel dependiendo del resultado
                 var nuevoNivel = if (winlose == "Victoria") nivel + 0.3 else nivel - 0.1
 
-                nuevoNivel = String.format("%.1f", nuevoNivel).toDouble()
+                // Formatear el nuevo nivel usando Locale.US para asegurar el punto decimal
+                nuevoNivel = String.format(Locale.US, "%.1f", nuevoNivel).toDouble()
 
                 // Obtener la lista de niveles actual
                 val listaNiveles = document.get("listaNiveles") as? ArrayList<Double> ?: arrayListOf()
@@ -452,6 +456,7 @@ class FragmentRanking : Fragment() {
                 Log.w(TAG, "Error al obtener el documento del usuario", e)
             }
     }
+
 
 
     private fun cargarFragment(fragment: Fragment) {
