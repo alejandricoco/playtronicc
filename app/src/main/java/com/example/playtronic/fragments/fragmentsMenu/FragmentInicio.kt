@@ -359,7 +359,7 @@ class FragmentInicio : Fragment() {
 
                         } else {
                             // Si el nivel es null, deja el mensaje que ya está
-                            //tvNivel?.text = "Actualmente no dispones\nde nivel Playtronic.\nCompleta el cuestionario\nen la sección jugar\npara obtenerlo."
+                            tvNivel?.text = "Actualmente no dispones\nde nivel Playtronic.\nCompleta el cuestionario\nen la sección jugar\npara obtenerlo."
                             tvNivel?.textSize = 13f // Tamaño de la fuente original
                             progressBarNivel?.visibility = View.GONE
                             linearLayoutImgYTexto?.visibility = View.VISIBLE
@@ -367,6 +367,15 @@ class FragmentInicio : Fragment() {
                             iconoNivel?.visibility = View.GONE
                             progressBarCont?.visibility = View.GONE
                         }
+                    } else {
+                        // Si el usuario no existe en la base de datos, muestra el mensaje de alerta
+                        tvNivel?.text = "Todavía no tienes nivel Playtronic. Completa el cuestionario en la sección Jugar para obtenerlo."
+                        tvNivel?.textSize = 13f // Tamaño de la fuente original
+                        progressBarNivel?.visibility = View.GONE
+                        linearLayoutImgYTexto?.visibility = View.VISIBLE
+
+                        iconoNivel?.visibility = View.GONE
+                        progressBarCont?.visibility = View.GONE
                     }
                 }
             }

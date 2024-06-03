@@ -379,9 +379,12 @@ class FragmentLogin : Fragment() {
             }
     }
 
-    private fun llamarMenu(){
-        val intent = Intent(activity, MenuActivity::class.java)
-        startActivity(intent)
+    private fun llamarMenu() {
+        activity?.let {
+            val intent = Intent(it, MenuActivity::class.java)
+            startActivity(intent)
+            it.finish()
+        }
     }
 
     private fun createTextWatcher(validationFunction: (String) -> Unit): TextWatcher {

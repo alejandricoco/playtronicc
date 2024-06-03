@@ -1,6 +1,7 @@
 package com.example.playtronic.fragments.fragmentsMenu
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.net.ParseException
@@ -58,7 +59,7 @@ class FragmentNivel : Fragment() {
         var docId = ""
 
         if (userEmail != null) {
-            docId = if (userEmail.contains("@")) "(Google) $userEmail" else userEmail
+            docId = if (userEmail.contains("@")) "(Google) $userEmail" else "$userEmail"
         } else if (twUser != null) {
             docId = "(Twitter) $twUser"
         }
@@ -81,7 +82,9 @@ class FragmentNivel : Fragment() {
                 }
 
                 val username = document.getString("usuario")
-                profileName.text = username
+                val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
+                val nombreUsuario = sharedPreferences.getString("nombreUsuario", "Default")
+                profileName.text = username ?: nombreUsuario
 
                 val nivel = document.getDouble("nivel")
                 profileLevel.text = if (nivel != null) {
@@ -111,14 +114,13 @@ class FragmentNivel : Fragment() {
                         tvPorcentajeVictoriasValor.text = "$porcentajeVictorias%"
 
                         val sortedResults = result.sortedBy {
-                            val dateString = it.getString("fecha")
+                            val timestamp = it.getTimestamp("fecha")
                             var date: Date? = null
-                            try {
-                                date = dateFormat.parse(dateString)
-                            } catch (e: ParseException) {
-                                Log.e(TAG, "Error al parsear la fecha", e)
+                            if (timestamp != null) {
+                                date = timestamp.toDate()
                             }
-                            date }
+                            date
+                        }
 
                         var maxRacha = 0
                         var rachaActual = 0

@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.icu.util.Calendar
+import android.net.ParseException
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -258,22 +259,26 @@ class FragmentRanking : Fragment() {
                     .whereEqualTo("usuario", username)
                     .get()
                     .addOnSuccessListener { documents ->
-                        val resultados = documents.map { document ->
+                        val resultados = documents.mapNotNull { document ->
                             val fechaTimestamp = document.getTimestamp("fecha")
                             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                            val fechaString = sdf.format(fechaTimestamp?.toDate())
-                            Resultado(
-                                document.getString("deporte")!!,
-                                fechaString,
-                                document.getString("set1_1")!!,
-                                document.getString("set1_2")!!,
-                                document.getString("set2_1")!!,
-                                document.getString("set2_2")!!,
-                                document.getString("set3_1")!!,
-                                document.getString("set3_2")!!,
-                                document.getString("usuario")!!,
-                                document.getString("winlose")!!
-                            )
+                            val fechaString = fechaTimestamp?.let { sdf.format(it.toDate()) }
+                            if (fechaString != null) {
+                                Resultado(
+                                    document.getString("deporte")!!,
+                                    fechaString,
+                                    document.getString("set1_1")!!,
+                                    document.getString("set1_2")!!,
+                                    document.getString("set2_1")!!,
+                                    document.getString("set2_2")!!,
+                                    document.getString("set3_1")!!,
+                                    document.getString("set3_2")!!,
+                                    document.getString("usuario")!!,
+                                    document.getString("winlose")!!
+                                )
+                            } else {
+                                null
+                            }
                         }.sortedByDescending {
                             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                             sdf.parse(it.fecha)
@@ -312,13 +317,11 @@ class FragmentRanking : Fragment() {
                 googleDocRef.get().addOnSuccessListener { googleDoc ->
                     if (googleDoc.exists() && googleDoc.getDouble("nivel") != null) {
                         guardarResultado(db, username!!)
-                        Toast.makeText(context, "Resultado subido con éxito", Toast.LENGTH_LONG).show()
                     } else {
                         val emailDocRef = db.collection("users").document(userEmail)
                         emailDocRef.get().addOnSuccessListener { emailDoc ->
                             if (emailDoc.exists() && emailDoc.getDouble("nivel") != null) {
                                 guardarResultado(db, username!!)
-                                Toast.makeText(context, "Resultado subido con éxito", Toast.LENGTH_LONG).show()
                             } else {
                                 Toast.makeText(context, "Para poder subir un resultado necesitas obtener Nivel Playtronic", Toast.LENGTH_LONG).show()
                             }
@@ -330,7 +333,6 @@ class FragmentRanking : Fragment() {
                 twitterDocRef.get().addOnSuccessListener { twitterDoc ->
                     if (twitterDoc.exists() && twitterDoc.getDouble("nivel") != null) {
                         guardarResultado(db, username!!)
-                        Toast.makeText(context, "Resultado subido con éxito", Toast.LENGTH_LONG).show()
                     } else {
                         Toast.makeText(context, "Para poder subir un resultado necesitas obtener Nivel Playtronic", Toast.LENGTH_LONG).show()
                     }
@@ -352,8 +354,7 @@ class FragmentRanking : Fragment() {
     fun guardarResultado(db: FirebaseFirestore, username: String) {
         // Obtener los datos de los campos de entrada
         val deporte = tenisPadelACTV.text.toString()
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val fecha = sdf.parse(fechaInput.text.toString())
+        val fechaString = fechaInput.text.toString()
         val winlose = victoriaDerrotaACTV.text.toString()
         val usuario = username
         val set1_1 = view?.findViewById<Spinner>(R.id.reSet1_1)?.selectedItem.toString()
@@ -364,8 +365,18 @@ class FragmentRanking : Fragment() {
         val set3_2 = view?.findViewById<Spinner>(R.id.reSet3_2)?.selectedItem.toString()
 
         // Comprobar que los campos requeridos estén completos
-        if (deporte.isEmpty() || fecha == null || winlose.isEmpty() || set1_1 == "-" || set1_2 == "-" || set2_1 == "-" || set2_2 == "-" ) {
+        if (deporte.isEmpty() || fechaString.isEmpty() || winlose.isEmpty() || set1_1 == "-" || set1_2 == "-" || set2_1 == "-" || set2_2 == "-" ) {
             Toast.makeText(context, "Por favor, completa todos los campos requeridos", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        //Parseamos la fecha
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val fecha: Date
+        try {
+            fecha = sdf.parse(fechaString)
+        } catch (e: ParseException) {
+            Toast.makeText(context, "Fecha inválida. Por favor, ingresa una fecha válida.", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -388,6 +399,7 @@ class FragmentRanking : Fragment() {
             .add(resultado)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                Toast.makeText(context, "Resultado subido con éxito", Toast.LENGTH_LONG).show()
 
                 // Obtener el correo electrónico del usuario
                 val userEmail = FirebaseAuth.getInstance().currentUser?.email
