@@ -29,6 +29,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class FragmentRanking : Fragment() {
@@ -105,7 +110,7 @@ class FragmentRanking : Fragment() {
 
                 // Iterar sobre cada documento (resultado)
                 documents.forEach { document ->
-                    val username = document.getString("usuario")!!
+                    val username = document.getString("nombre") ?: document.getString("usuario")!!
 
                     // Si el jugador aún no está en el mapa, añadirlo
                     if (!playersData.containsKey(username)) {
@@ -157,7 +162,7 @@ class FragmentRanking : Fragment() {
 
                             // Iterar sobre cada documento (resultado)
                             documents.forEach { document ->
-                                val username = document.getString("usuario")!!
+                                val username = document.getString("nombre") ?: document.getString("usuario")!!
 
                                 // Si el jugador aún no está en el mapa, añadirlo
                                 if (!playersData.containsKey(username)) {
@@ -254,9 +259,15 @@ class FragmentRanking : Fragment() {
                 val user = FirebaseAuth.getInstance().currentUser
                 val sharedPreferences = requireActivity().getSharedPreferences("sharedPreferences", Context.MODE_PRIVATE)
                 val username = user?.displayName ?: sharedPreferences.getString("nombreUsuario", "Default")
+                val email  = user?.email
                 val db = FirebaseFirestore.getInstance()
+                GlobalScope.launch(Dispatchers.Main) {
+                    val nombre = getUserNameByEmail(db, email ?: "")
+                    // Aquí puedes usar 'nombre'
+
+
                 db.collection("resultados")
-                    .whereEqualTo("usuario", username)
+                    .whereEqualTo("usuario", nombre ?: username)
                     .get()
                     .addOnSuccessListener { documents ->
                         val resultados = documents.mapNotNull { document ->
@@ -287,6 +298,8 @@ class FragmentRanking : Fragment() {
                         val adapter = ResultadoAdapter(resultados)
                         recyclerViewResultados.adapter = adapter
                     }
+
+                }
 
             } else {
                 // Cambiar el texto del botón a "Ver mis resultados"
@@ -321,7 +334,8 @@ class FragmentRanking : Fragment() {
                         val emailDocRef = db.collection("users").document(userEmail)
                         emailDocRef.get().addOnSuccessListener { emailDoc ->
                             if (emailDoc.exists() && emailDoc.getDouble("nivel") != null) {
-                                guardarResultado(db, username!!)
+                                val usuarioEmail = emailDoc.getString("nombre")
+                                guardarResultado(db, usuarioEmail!!)
                             } else {
                                 Toast.makeText(context, "Para poder subir un resultado necesitas obtener Nivel Playtronic", Toast.LENGTH_LONG).show()
                             }
@@ -470,6 +484,19 @@ class FragmentRanking : Fragment() {
     }
 
 
+    suspend fun getUserNameByEmail(db: FirebaseFirestore, email: String): String? = withContext(Dispatchers.IO) {
+        if (email.isNotBlank()) {
+            val docRef = db.collection("users").document(email)
+            val document = docRef.get().await()
+            if (document != null && document.exists()) {
+                document.getString("nombre")
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+    }
 
     private fun cargarFragment(fragment: Fragment) {
         // Asegúrate de que la actividad contenedora no sea nula

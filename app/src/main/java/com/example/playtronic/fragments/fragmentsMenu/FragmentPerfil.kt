@@ -19,6 +19,7 @@ import com.example.playtronic.Partido
 import com.example.playtronic.PartidoEliminarAdapter
 import com.example.playtronic.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 
 
@@ -51,65 +52,67 @@ class FragmentPerfil : Fragment() {
         val user = auth.currentUser
         if (user != null) {
             val photoUrl = user.photoUrl
-            if (photoUrl != null)
-                {
-                    Glide.with(this)
-                        .load(photoUrl)
-                        .into(profileImage)
-                }
-            else{
-                    Glide.with(this)
-                        .load("https://www.iprcenter.gov/image-repository/blank-profile-picture.png")
-                        .into(profileImage)
-                }
+            if (photoUrl != null) {
+                Glide.with(this)
+                    .load(photoUrl)
+                    .into(profileImage)
+            } else {
+                Glide.with(this)
+                    .load("https://www.iprcenter.gov/image-repository/blank-profile-picture.png")
+                    .into(profileImage)
+            }
             val username = user.displayName
-            if (username != null)
-                {
-                    profileName.setText(username)
-                }
-            else
-                {
-                    // Si el usuario no tiene nombre de usuario, se muestra el nombre de usuario guardado en SharedPreferences
-                    profileName.setText(nombreUsuario)
-                }
-        }
+            if (username != null) {
+                profileName.setText(username)
+            } else {
 
+            }
+        }
 
         val profileLevel = view.findViewById<TextView>(R.id.profile_level)
         val db = FirebaseFirestore.getInstance()
 
         val userEmail = user?.email
         val twUser = user?.displayName
-        var docId = ""
 
         if (userEmail != null) {
-            docId = if (userEmail.contains("@")) "(Google) $userEmail" else userEmail
-        } else if (twUser != null) {
-            docId = "(Twitter) $twUser"
-        }
-
-        db.collection("users").document(docId)
-            .get()
-            .addOnSuccessListener { document ->
-
-                val nivel = document.getDouble("nivel")
-                profileLevel.text = if (nivel != null) {
-                    when {
-                        nivel <= 3.4 -> "$nivel (Casi malo)"
-                        nivel <= 7.0 -> "$nivel (Casi bueno)"
-                        else -> "$nivel (Leyenda)"
-                    }
+            // Fetch document using userEmail
+            val emailDocRef = db.collection("users").document(userEmail)
+            emailDocRef.get().addOnSuccessListener { emailDoc ->
+                if (emailDoc.exists()) {
+                    profileName.setText(emailDoc.getString("nombre"))
+                    handleDocument(emailDoc, db, profileLevel)
                 } else {
-                    "Sin nivel"
+                    // Fetch document using Google email
+                    val googleDocRef = db.collection("users").document("(Google) $userEmail")
+                    googleDocRef.get().addOnSuccessListener { googleDoc ->
+                        if (googleDoc.exists()) {
+                            handleDocument(googleDoc, db, profileLevel)
+                        } else {
+                            Log.w(TAG, "No document found for user")
+                        }
+                    }.addOnFailureListener { e ->
+                        Log.w(TAG, "Error getting Google document", e)
+                    }
                 }
-
-
+            }.addOnFailureListener { e ->
+                Log.w(TAG, "Error getting email document", e)
             }
-            .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents: ", exception)
+        } else if (twUser != null) {
+            // Fetch document using Twitter username
+            val twitterDocRef = db.collection("users").document("(Twitter) $twUser")
+            twitterDocRef.get().addOnSuccessListener { twitterDoc ->
+                if (twitterDoc.exists()) {
+                    handleDocument(twitterDoc, db, profileLevel)
+                } else {
+                    Log.w(TAG, "No document found for user")
+                }
+            }.addOnFailureListener { e ->
+                Log.w(TAG, "Error getting Twitter document", e)
             }
-
-
+        } else {
+            Log.w(TAG, "User is not authenticated")
+        }
 
         val recyclerViewMisPartidos = view.findViewById<RecyclerView>(R.id.recyclerViewMisPartidos)
         recyclerViewMisPartidos.layoutManager = LinearLayoutManager(context)
@@ -142,6 +145,19 @@ class FragmentPerfil : Fragment() {
                 // Configura el RecyclerView
                 recyclerViewMisPartidos.adapter = PartidoEliminarAdapter(partidos.toMutableList())
             }
+        }
+    }
+
+    private fun handleDocument(document: DocumentSnapshot, db: FirebaseFirestore, profileLevel: TextView) {
+        val nivel = document.getDouble("nivel")
+        profileLevel.text = if (nivel != null) {
+            when {
+                nivel <= 3.4 -> "$nivel (Casi malo)"
+                nivel <= 7.0 -> "$nivel (Casi bueno)"
+                else -> "$nivel (Leyenda)"
+            }
+        } else {
+            "Sin nivel"
         }
     }
 
