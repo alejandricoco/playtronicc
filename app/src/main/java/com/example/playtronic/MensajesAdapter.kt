@@ -32,6 +32,7 @@ class MensajesAdapter(var mensajes: MutableList<Mensaje>) : RecyclerView.Adapter
         holder.textViewNombreRemitente.text = mensaje.nombreRemitente
         holder.textViewFecha.text = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).apply {
             timeZone = android.icu.util.TimeZone.getTimeZone("Europe/Madrid") }.format(Date(mensaje.fechaEnvio))
+        holder.textViewFecha.setTextColor(ContextCompat.getColor(holder.itemView.context, android.R.color.white))
 
         holder.textViewContenido.text = mensaje.contenido
         // Configura las demás vistas aquí
